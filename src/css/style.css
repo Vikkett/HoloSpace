@@ -1,0 +1,295 @@
+body {
+    /* fond sombre pour l’ambiance spatiale */
+    background: #050508;
+    /* couleur de texte claire pour le contraste */
+    color: #e0e0ff;
+    /* police du text */
+    font-family: system-ui, Arial, sans-serif;
+    /* line-height pour améliorer la lisibilité */
+    line-height: 1.6;
+    /* empêche le scroll horizontal accidentel */
+    overflow-x: hidden;
+}
+
+* {
+    /* supprime les marges et paddings par défaut */
+    margin: 0;
+    padding: 0;
+    /* garantit un calcul de taille plus prévisible */
+    box-sizing: border-box;
+}
+nav {
+    /* barre de navigation fixée en haut */
+    position: fixed;
+    top: 0;
+    /* prend toute la largeur */
+    width: 100%;
+    /* espace intérieur */
+    padding: 20px 5%;
+    /* alignement horizontal */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    /* fond légèrement transparent */
+    background: rgba(5, 5, 8, 0.8);
+    /* reste au-dessus du reste */
+    z-index: 10;
+}
+
+.logo {
+    /* taille du texte du logo */
+    font-size: 20px;
+    /* logo plus visible */
+    font-weight: bold;
+}
+
+.links a {
+    /* espace entre les liens */
+    margin-left: 20px;
+    /* enlève le soulignement */
+    text-decoration: none;
+    /* couleur du texte */
+    color: #e0e0ff;
+}
+
+.links a:hover {
+    /* couleur au survol */
+    color: #00d4ff;
+}
+
+.gal {
+    /* hauteur minimum écran */
+    min-height: 100vh;
+    /* padding avec place pour la nav */
+    padding: 120px 5% 60px;
+    /* permet le positionnement absolu des enfants */
+    position: relative;
+    /* cache ce qui dépasse */
+    overflow: hidden;
+}
+
+.gal::before {
+    /* pseudo-élément pour les étoiles */
+    content: "";
+    position: absolute;
+    /* couvre toute la section */
+    inset: 0;
+    /* étoiles créées avec des gradients */
+    background:
+        radial-gradient(1px 1px at 20px 30px, #fff, transparent),
+        radial-gradient(1px 1px at 80px 120px, #fff, transparent),
+        radial-gradient(1px 1px at 140px 60px, #fff, transparent),
+        radial-gradient(1px 1px at 200px 150px, #fff, transparent);
+    /* répétition du motif */
+    background-size: 200px 200px;
+    /* étoiles discrètes */
+    opacity: 0.5;
+    /* animation légère */
+    animation: stars 5s ease-in-out infinite;
+    /* pas cliquable */
+    pointer-events: none;
+}
+
+.gal h1 {
+    /* gros titre */
+    font-size: 3rem;
+    /* limite la largeur */
+    max-width: 600px;
+}
+
+.gal h1 span {
+    /* couleur accent */
+    color: #00d4ff;
+}
+
+.gal p {
+    /* largeur du texte */
+    max-width: 500px;
+    /* espace autour */
+    margin: 20px 0 30px;
+    /* texte plus doux */
+    color: #aaa;
+}
+
+.actions a {
+    /* bouton cliquable */
+    display: inline-block;
+    /* espace entre boutons */
+    margin-right: 15px;
+    /* padding intérieur */
+    padding: 12px 22px;
+    /* coins arrondis */
+    border-radius: 25px;
+    /* enlève le style lien */
+    text-decoration: none;
+    /* couleur principale */
+    background: #00d4ff;
+    /* couleur du texte */
+    color: #050508;
+    /* texte un peu plus épais */
+    font-weight: 600;
+}
+
+.actions a.secondary {
+    /* bouton secondaire */
+    background: transparent;
+    /* contour visible */
+    border: 1px solid #00d4ff;
+    /* texte coloré */
+    color: #00d4ff;
+}
+
+.planet {
+    /* taille de la planète */
+    width: 260px;
+    height: 260px;
+    /* forme ronde */
+    border-radius: 50%;
+    /* dégradé pour effet volume */
+    background: radial-gradient(circle at 30% 30%, #00d4ff, #7000ff);
+    /* position libre */
+    position: absolute;
+    /* placement à droite */
+    right: 10%;
+    /* centré verticalement */
+    top: 50%;
+    /* animation de flottement */
+    animation: float 6s ease-in-out infinite;
+    /* lumière autour */
+    box-shadow: 0 0 40px rgba(0, 212, 255, 0.4);
+}
+
+@keyframes float {
+    /* position de départ */
+    0%   { transform: translateY(-50%) translateX(0); }
+    /* monte légèrement */
+    40%  { transform: translateY(-56%) translateX(6px); }
+    /* redescend un peu */
+    70%  { transform: translateY(-53%) translateX(-3px); }
+    /* revient à la position initiale */
+    100% { transform: translateY(-50%) translateX(0); }
+}
+
+section {
+    /* espace entre sections */
+    padding: 80px 5%;
+}
+
+section h2 {
+    /* titre de section */
+    font-size: 2rem;
+    /* espace sous le titre */
+    margin-bottom: 40px;
+}
+
+.steps {
+    /* affichage horizontal */
+    display: flex;
+    /* espace entre cartes */
+    gap: 30px;
+    /* retour à la ligne si besoin */
+    flex-wrap: wrap;
+}
+
+.steps div {
+    /* largeur max */
+    max-width: 260px;
+    /* fond léger */
+    background: rgba(255,255,255,0.05);
+    /* espace intérieur */
+    padding: 20px;
+    /* coins arrondis */
+    border-radius: 12px;
+}
+
+.features {
+    /* grille responsive */
+    display: grid;
+    /* colonnes adaptatives */
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    /* espace entre éléments */
+    gap: 25px;
+}
+
+.features div {
+    /* fond discret */
+    background: rgba(255,255,255,0.04);
+    /* padding */
+    padding: 20px;
+    /* arrondi */
+    border-radius: 12px;
+}
+
+.act {
+    /* section finale centrée */
+    text-align: center;
+    /* fond différent */
+    background: #0a0a12;
+}
+
+.act a {
+    /* bouton principal */
+    display: inline-block;
+    /* espace au-dessus */
+    margin-top: 20px;
+    /* taille du bouton */
+    padding: 14px 30px;
+    /* couleur vive */
+    background: #00d4ff;
+    /* texte sombre */
+    color: #050508;
+    /* pas de soulignement */
+    text-decoration: none;
+    /* arrondi */
+    border-radius: 30px;
+    /* texte en gras */
+    font-weight: bold;
+}
+
+footer {
+    /* pied de page centré */
+    text-align: center;
+    /* espace intérieur */
+    padding: 30px;
+    /* couleur discrète */
+    color: #777;
+    /* petite taille */
+    font-size: 14px;
+}
+
+@keyframes stars {
+    /* étoiles peu visibles */
+    0%   { opacity: 0.4; }
+    /* étoiles plus visibles */
+    50%  { opacity: 0.7; }
+    /* retour à normal */
+    100% { opacity: 0.4; }
+}
+
+@media (max-width: 768px) {
+
+    .hero h1 {
+        /* titre plus petit sur mobile */
+        font-size: 2.2rem;
+    }
+
+    .planet {
+        /* planète sous le texte */
+        position: static;
+        /* centrée */
+        margin: 40px auto 0;
+        /* annule le transform */
+        transform: none;
+        /* animation mobile */
+        animation: float-mobile 6s ease-in-out infinite;
+    }
+
+    @keyframes float-mobile {
+        /* position normale */
+        0%   { transform: translateY(0); }
+        /* monte légèrement */
+        50%  { transform: translateY(-15px); }
+        /* redescend */
+        100% { transform: translateY(0); }
+    }
+}
