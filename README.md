@@ -29,7 +29,7 @@ Tests :
 # Schema du projet et des fichiers
 
 holospace/
-├── .github/                    ← Configuration GitHub
+├── .github/                    ← Configuration GitHub 
 │   └── workflows/
 │       └── ci.yml              # Tests automatiques à chaque push pour éviter de casser le projet.
 │
