@@ -28,6 +28,7 @@ Tests :
 
 # Schema du projet et des fichiers
 
+```
 holospace/
 ├── .github/                    ← Configuration GitHub 
 │   └── workflows/
@@ -70,7 +71,7 @@ holospace/
 ├── .gitignore                  # Fichiers à ignorer par Git (node_modules, .env)
 ├── package.json                # Dépendances npm + scripts (start, build, dev)
 └── README.md                   # Fichier avec des explications de projet
-
+```
 
 
 ---
