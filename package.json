@@ -1,0 +1,24 @@
+{
+  "name": "holospace",
+  "version": "1.0.0",
+  "description": "Represantation visuel",
+  "homepage": "https://github.com/Vikkett/HoloSpace#readme",
+  "bugs": {
+    "url": "https://github.com/Vikkett/HoloSpace/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Vikkett/HoloSpace.git"
+  },
+  "license": "MIT",
+  "author": "Viktoriia Varennyk",
+  "type": "commonjs",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs",
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}

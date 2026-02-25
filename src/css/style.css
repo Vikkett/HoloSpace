@@ -82,8 +82,7 @@ nav {
         radial-gradient(1px 1px at 200px 150px, #fff, transparent);
     /* répétition du motif */
     background-size: 200px 200px;
-    /* étoiles discrètes */
-    opacity: 0.5;
+
     /* animation légère */
     animation: stars 5s ease-in-out infinite;
     /* pas cliquable */
@@ -157,17 +156,6 @@ nav {
     animation: float 6s ease-in-out infinite;
     /* lumière autour */
     box-shadow: 0 0 40px rgba(0, 212, 255, 0.4);
-}
-
-@keyframes float {
-    /* position de départ */
-    0%   { transform: translateY(-50%) translateX(0); }
-    /* monte légèrement */
-    40%  { transform: translateY(-56%) translateX(6px); }
-    /* redescend un peu */
-    70%  { transform: translateY(-53%) translateX(-3px); }
-    /* revient à la position initiale */
-    100% { transform: translateY(-50%) translateX(0); }
 }
 
 section {
@@ -257,6 +245,9 @@ footer {
     font-size: 14px;
 }
 
+
+/* responsive*/
+
 @keyframes stars {
     /* étoiles peu visibles */
     0%   { opacity: 0.4; }
@@ -292,4 +283,17 @@ footer {
         /* redescend */
         100% { transform: translateY(0); }
     }
+}
+
+
+
+@keyframes float {
+    /* position de départ */
+    0%   { transform: translateY(-50%) translateX(0); }
+    /* monte légèrement */
+    40%  { transform: translateY(-56%) translateX(6px); }
+    /* redescend un peu */
+    70%  { transform: translateY(-53%) translateX(-3px); }
+    /* revient à la position initiale */
+    100% { transform: translateY(-50%) translateX(0); }
 }
