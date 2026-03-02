@@ -56,6 +56,7 @@ npm run build
 ```
 
 ### Directory Structure 
+```
 holospace/
 ├── .github/
 │   └── workflows/
@@ -72,7 +73,7 @@ holospace/
 ├── .gitignore                  # Exclusions Git (node_modules, .env, dist)
 ├── package.json                # Dépendances npm et scripts
 └── README.md                   # Ce fichier
-
+```
 ## Collaborate 
 
 #### Proposer une nouvelle fonctionnalité
