@@ -43,6 +43,7 @@ npm install
 npm run dev
 
 # lancement de test 
+npm test
 # Tests unitaires (Jest)
 git add .
 git commit -m "ajout fonctionnalité"

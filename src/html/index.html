@@ -1,59 +1,42 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <!-- Définit l’encodage UTF-8 pour afficher correctement les caractères spéciaux -->
     <meta charset="UTF-8">
-    <!-- Permet un affichage responsive sur mobile en contrôlant l’échelle -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Titre de la page affiché dans l’onglet du navigateur et les favoris -->
     <title>HoloSpace</title>
-    <!-- Lien vers la feuille de style CSS qui gère toute l’apparence du site -->
     <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/login.css">
+    
+    <script src="https://accounts.google.com/gsi/client?hl=fr" async defer></script>
 </head>
 <body>
-    <!-- Barre de navigation principale présente sur tout le site -->
     <nav>
-        <!-- Élément contenant le nom du site, sert aussi d’identité visuelle -->
         <div class="logo">HoloSpace</div>
-        <!-- Conteneur regroupant les liens de navigation -->
         <div class="links">
-            <!-- Lien interne qui fait défiler la page jusqu’à la section "about" -->
             <a href="#about">Découvrir</a>
-            <!-- Lien interne qui fait défiler la page jusqu’à la section des fonctionnalités -->
             <a href="#features">Fonctionnalités</a>
-            <!-- Lien externe vers la page de connexion / inscription -->
-            <a href="login.html">Commencer</a>
+            <a href="#" class="open-modal">Commencer</a>
         </div>
     </nav>
-    <!-- Section principale, première chose visible par l’utilisateur -->
+
     <section class="gal">
-        <h1>
-            <!-- Texte principal du titre expliquant le concept du site -->
-            Transformez votre essence en
-            <!-- Mot mis en valeur visuellement pour attirer l’attention -->
-            <span>galaxie</span>
-        </h1>
-        <!-- Paragraphe descriptif qui explique le concept en une phrase -->
+        <h1>Transformez votre essence en <span>galaxie</span></h1>
         <p>
             Créez un univers 3D basé sur votre personnalité.
             Chaque planète raconte une partie de vous.
         </p>
         <div class="actions">
-            <!-- Lien principal incitant l’utilisateur à passer à l’action -->
-            <a href="login.html">Créer mon univers</a>
+            <a href="#" class="open-modal">Créer mon univers</a>
         </div>
-        <!-- Élément purement décoratif représentant une planète animée en CSS -->
         <div class="planet"></div>
     </section>
-    <!-- Section expliquant le fonctionnement du service -->
+
     <section id="about">
-        <!-- Titre de section indiquant un changement de sujet -->
         <h2>Comment ça marche</h2>
-        <!-- Conteneur regroupant les différentes étapes -->
         <div class="steps">
             <div>
-                <h3>1. Discutez et répondez</h3>
-                <p>Parlez de vous, de vos envies et de ce qui vous inspire.</p>
+                <h3>1. Connectez-vous</h3>
+                <p>Utilisez votre compte Google pour une analyse instantanée.</p>
             </div>
             <div>
                 <h3>2. Explorez</h3>
@@ -61,7 +44,7 @@
             </div>
         </div>
     </section>
-    <!-- Section dédiée aux fonctionnalités principales -->
+
     <section id="features">
         <h2>Votre univers en 3D</h2>
         <div class="features">
@@ -84,15 +67,76 @@
         </div>
     </section>
 
-    <!-- Section finale servant d’appel à l’action -->
     <section class="act">
-        <!-- Message incitant l’utilisateur à démarrer -->
         <h2>Prêt à commencer ?</h2>
-        <!-- Lien final vers la page de lancement -->
-        <a href="login.html">Lancer l’expérience</a>
+        <a href="#" class="open-modal">Lancer l’expérience</a>
     </section>
+
     <footer>
         <p>© 2026 HoloSpace</p>
     </footer>
+
+    <div id="login-modal" class="modal-overlay">
+        <div class="auth-box">
+            <span class="close-modal">&times;</span>
+            <h1>HoloSpace</h1>
+            <p class="subtitle">Accédez à votre univers personnel</p>
+            
+            <div id="google-btn-container">
+                <div id="g_id_onload"
+                    data-client_id="537399217521-4v13efe1d9kal8hs5f0vpjp2gm9598e8.apps.googleusercontent.com"
+                    data-context="signin"
+                    data-ux_mode="popup"
+                    data-callback="handleCredentialResponse"
+                    data-auto_prompt="false">
+                </div>
+
+                <div class="g_id_signin"
+                    data-type="standard"
+                    data-shape="pill"
+                    data-theme="outline"
+                    data-text="signin_with"
+                    data-size="large"
+                    data-logo_alignment="left">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Gestion de l'ouverture/fermeture de la fenêtre
+        const modal = document.getElementById('login-modal');
+        const openBtns = document.querySelectorAll('.open-modal');
+        const closeBtn = document.querySelector('.close-modal');
+
+        openBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                modal.classList.add('active');
+            });
+        });
+
+        closeBtn.onclick = () => modal.classList.remove('active');
+
+        window.onclick = (e) => {
+            if (e.target === modal) modal.classList.remove('active');
+        };
+
+        // Gestion de la réponse Google
+        function handleCredentialResponse(response) {
+            const responsePayload = decodeJwtResponse(response.credential);
+            alert("Bienvenue " + responsePayload.given_name + " !");
+            // window.location.href = "galaxy.html";
+        }
+
+        function decodeJwtResponse(token) {
+            let base64Url = token.split('.')[1];
+            let base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            let jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
+                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            }).join(''));
+            return JSON.parse(jsonPayload);
+        }
+    </script>
 </body>
 </html>
