@@ -285,8 +285,6 @@ footer {
     }
 }
 
-
-
 @keyframes float {
     /* position de départ */
     0%   { transform: translateY(-50%) translateX(0); }
