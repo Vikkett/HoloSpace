@@ -36,11 +36,11 @@ git clone https://github.com/Vikkett/HoloSpace.git
 cd holospace
 
 # Installer les packages
-npm install
+#npm install
 
 # Build et lancement 
 # Mode développement
-npm run dev
+#npm run dev                - # création le projet pas avec le VITE donc pour lancer le projet faut lancer le fichier HTML ou installer independance Go Live en VS pour avoir des coréctions en live 
 
 # lancement de test 
 npm test
@@ -62,6 +62,8 @@ holospace/
 ├── .github/
 │   └── workflows/
 │       └── ci.yml              # CI/CD GitHub Actions - tests auto à chaque push
+├── docs            
+│  
 ├── src/
 │   ├── html/                   # Frontend - pages statiques
 │   │   ├── index.html          # Page d'accueil / landing
@@ -71,6 +73,8 @@ holospace/
 │   │   ├── style.css           # Styles de page main
 │   │   └── login.css           # Styles page login
 │
+├── tests
+│   └── basic.test.js           # script de tests
 ├── .gitignore                  # Exclusions Git (node_modules, .env, dist)
 ├── package.json                # Dépendances npm et scripts
 └── README.md                   # Ce fichier
