@@ -102,7 +102,6 @@ const closeBtn = document.querySelector('.close-modal');
 openBtns.forEach(btn => {
     btn.addEventListener('click', (e) => {
         e.preventDefault();
-        // Only open if not logged in
         if (!localStorage.getItem('holospace_jwt')) {
             modal.classList.add('active');
         }
