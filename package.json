@@ -20,7 +20,8 @@
   },
   "scripts": {
     "test": "jest",
-    "dev": "vite src/html"
+    "dev": "vite",
+    "start": "node server.js"
   },
   "devDependencies": {
     "jest": "^30.2.0",
