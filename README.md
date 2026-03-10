@@ -10,21 +10,19 @@ HoloSpace is an immersive web application that transforms personal data into an 
 
 | Dependency | Version | Usage |
 |------------|---------|-------------|
-| Node.js    | v18+    | JavaScript backend runtime |
-| MySQL      | 8.0+    | User and universe database |
+|[Node.js](https://nodejs.org/en/download)   | v18+    | JavaScript backend runtime |
+|[MySql](https://www.mysql.com/downloads/)      | 8.0+    | User and universe database |
 | npm        | 9+      | Package manager            |
-| VS Code    | 1.95.3  | Development IDE            |
-| Navigateur | Chrome/Safari | WebGL 2.0 required   |
+|[VS Code](https://code.visualstudio.com/download)   | 1.95+| Development IDE            |
+| Browser    | Chrome/Safari | WebGL 2.0 required   |
 
-## Software installation
-Node.js - https://nodejs.org/en/download
-MySql - https://www.mysql.com/downloads/
-VS Code - https://code.visualstudio.com/download
 
 
 ### Configuration
 
 #### MySQL database
+
+//TODO
 
 ```bash
 # Create the database
@@ -37,7 +35,6 @@ mysql -u root -p < database/schema.sql
 #### Dev environment
 ```bash
 # Clone the repository
-git clone https://github.com/Vikkett/HoloSpace.git
 cd holospace
 
 # Install packages
@@ -53,10 +50,6 @@ node server.js
 
 # Run Tests
 npm test
-# Unit Tests (Jest)
-git add .
-git commit -m "added feature"
-git push origin feature/prototype   # <-- GitHub launches tests AUTOMATICALLY
 ```
 
 #### 2. Integration environment
@@ -91,11 +84,11 @@ holospace/
 ## Collaboration
 
 #### Proposing a new feature
-```bash 
-# 1. Issue: Open an issue on GitHub describing the feature.
-# 2. Discussion: Wait for validation or feedback.
-# 3. Pull Request: Create a branch feature/feature-name and submit.
-```
+ 
+ 1. Issue: Open an issue on GitHub describing the feature.
+2. Discussion: Wait for validation or feedback.
+3. Pull Request: Create a branch feature/feature-name and submit.
+
 
 ### Git Workflow
 
@@ -110,8 +103,9 @@ develop     # Feature integration
 feature/prototype # Prototype development
 ```
 
+// TODO
 ## License
 This project is licensed under the MIT License.
 
 ## Contact 
-Email: varennikvika@gmail.com or via GitHub Issues.
+Email: varennikvika@gmail.com or via [GitHub Issues](https://github.com/Vikkett/HoloSpace/issues).
