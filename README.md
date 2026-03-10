@@ -12,9 +12,15 @@ HoloSpace is an immersive web application that transforms personal data into an 
 |------------|---------|-------------|
 | Node.js    | v18+    | JavaScript backend runtime |
 | MySQL      | 8.0+    | User and universe database |
-| npm        | 9+      | Package manager |
-| VS Code    | 1.95.3  | Development IDE |
-| Navigateur | Chrome/Safari | WebGL 2.0 required|
+| npm        | 9+      | Package manager            |
+| VS Code    | 1.95.3  | Development IDE            |
+| Navigateur | Chrome/Safari | WebGL 2.0 required   |
+
+## Software installation
+Node.js - https://nodejs.org/en/download
+MySql - https://www.mysql.com/downloads/
+VS Code - https://code.visualstudio.com/download
+
 
 ### Configuration
 

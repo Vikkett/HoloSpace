@@ -6,16 +6,16 @@ import { OAuth2Client } from 'google-auth-library';
 const app = express();
 const PORT = 3000;
 
-// Google Client ID (Matches your Frontend)
+// Google Client ID
 const GOOGLE_CLIENT_ID = '537399217521-4v13efe1d9kal8hs5f0vpjp2gm9598e8.apps.googleusercontent.com';
 const client = new OAuth2Client(GOOGLE_CLIENT_ID);
 
-// Secret key to sign your website's tokens
+// Secret key to sign website's tokens
 const JWT_SECRET = 'holospace-secret-key-2026';
 
 // --- MIDDLEWARE ---
 app.use(cors({
-    origin: 'http://localhost:5173', // Allows your Vite dev server
+    origin: 'http://localhost:5173', // Allows Vite dev server
     methods: ['GET', 'POST'],
     credentials: true                
 }));

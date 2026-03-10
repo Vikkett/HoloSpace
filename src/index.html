@@ -89,8 +89,9 @@
     </div>
 
     <script>
+
 // ==========================================
-// 1. CONFIGURATION & COOKIE HELPERS
+// 1. CONFIGURATION & COOKIE 
 // ==========================================
 
 const API_URL = 'http://localhost:3000';
@@ -164,7 +165,7 @@ window.onclick = (e) => {
 // ==========================================
 
 window.onload = function () {
-    // Check if user is already logged in via cookies on page load (prevents disconnect on refresh)
+    // Check if user is already logged in via cookies on page load
     const savedJwt = getCookie('holospace_jwt');
     const savedUser = getCookie('holospace_user');
     
@@ -194,12 +195,11 @@ window.onload = function () {
     );
 };
 
-/**
- * Callback function after Google sign-in is successful.
- */
+// Callback function after Google sign-in is successful.
+
 async function handleCredentialResponse(response) {
     try {
-        // Send Google token to your backend for verification
+        // Send Google token to backend for verification
         const res = await fetch(`${API_URL}/auth/google`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -225,9 +225,7 @@ async function handleCredentialResponse(response) {
     }
 }
 
-/**
- * Updates the page content with user-specific data.
- */
+//Updates the page content with user-specific data.
 function updateUI(userData) {
     // Change the main headline
     document.getElementById('main-title').innerHTML = "Bienvenue, <span>" + userData.given_name + "</span>";
@@ -251,9 +249,8 @@ function updateUI(userData) {
     }
 }
 
-/**
- * Checks if the JWT is still valid with the server.
- */
+//Checks if the JWT is still valid with the server
+
 async function validateToken(token) {
     try {
         const res = await fetch(`${API_URL}/user/profile`, {
@@ -266,18 +263,14 @@ async function validateToken(token) {
     }
 }
 
-/**
- * Clears session data and reloads the app.
- */
+//Clears session data and reloads the app
 function logout() {
     deleteCookie('holospace_jwt');
     deleteCookie('holospace_user');
     location.reload(); // Hard refresh to reset the state
 }
 
-/**
- * Global helper for making authenticated API calls.
- */
+//helper for making authenticated API calls
 async function fetchWithAuth(url, options = {}) {
     const token = getCookie('holospace_jwt');
     if (!token) throw new Error('Not authenticated');
