@@ -1,58 +1,61 @@
 # HoloSpace
 
-## Description
+## Description
 
-HoloSpace est une application web immersive qui transforme les données personnelles en une galaxie 3D interactive. L'application utilise une IA (Groq API) pour analyser les réponses des utilisateurs et générer automatiquement un univers visuel unique composé de planètes et étoiles.
-
+HoloSpace is an immersive web application that transforms personal data into an interactive 3D galaxy. The application utilizes AI (Groq API) to analyze user responses and automatically generate a unique visual universe composed of planets and stars.
 
 ## Getting Started
 
 ### Prerequisites
 
-| Dépendance | Version | Utilisation |
+| Dependency | Version | Usage |
 |------------|---------|-------------|
-| Node.js    | v18+    | Runtime JavaScript backend |
-| MySQL      | 8.0+    | Base de données utilisateurs et univers |
-| npm        | 9+      | Gestionnaire de packages |
-| VS Code    | dernière| IDE de développement |
-| Navigateur | Chrome/Safari | WebGL 2.0 requis |
+| Node.js    | v18+    | JavaScript backend runtime |
+| MySQL      | 8.0+    | User and universe database |
+| npm        | 9+      | Package manager |
+| VS Code    | 1.95.3  | Development IDE |
+| Navigateur | Chrome/Safari | WebGL 2.0 required|
 
 ### Configuration
 
-#### Base de données MySQL
+#### MySQL database
 
 ```bash
-# Créer la base de données
-mysql -u root -p &lt; database/schema.sql
+# Create the database
+mysql -u root -p < database/schema.sql
 ```
 
 ### Deployment
 
-#### 1. Installation des dépendances
+#### 1. Installation of dependencies
 #### Dev environment
 ```bash
-# Cloner le repository
+# Clone the repository
 git clone https://github.com/Vikkett/HoloSpace.git
 cd holospace
 
-# Installer les packages
-#npm install
+# Install packages
+npm install
 
-# Build et lancement 
-# Mode développement
-#npm run dev                - # création le projet pas avec le VITE donc pour lancer le projet faut lancer le fichier HTML ou installer independance Go Live en VS pour avoir des coréctions en live 
+# Build and Launch
 
-# lancement de test 
+# Development Mode
+npm run dev
+
+# Backend Mode 
+node server.js
+
+# Run Tests
 npm test
-# Tests unitaires (Jest)
+# Unit Tests (Jest)
 git add .
-git commit -m "ajout fonctionnalité"
-git push origin feature/prototype   # <-- GitHub lance les tests AUTOMATIQUEMENT
+git commit -m "added feature"
+git push origin feature/prototype   # <-- GitHub launches tests AUTOMATICALLY
 ```
 
 #### 2. Integration environment
 ```bash
-# Build pour production
+# Build for production
 npm run build
 ```
 
@@ -61,48 +64,48 @@ npm run build
 holospace/
 ├── .github/
 │   └── workflows/
-│       └── ci.yml              # CI/CD GitHub Actions - tests auto à chaque push
-├── docs            
+│       └── ci.yml              # GitHub Actions CI/CD - auto-tests on every push         
 │  
+├── server
+│   └── server.mjs              # backend file
 ├── src/
-│   ├── html/                   # Frontend - pages statiques
-│   │   ├── index.html          # Page d'accueil / landing
-│   │   └── login.html          # Authentification (connexion/inscription)
+│   ├──html                     
+│   │  └──index.html            # Home / Landing page
 │   │
-│   ├── css/
-│   │   ├── style.css           # Styles de page main
-│   │   └── login.css           # Styles page login
+│   └── css/
+│       ├── style.css           # Main page styles
+│       └── login.css           # Login window styles
 │
 ├── tests
-│   └── basic.test.js           # script de tests
-├── .gitignore                  # Exclusions Git (node_modules, .env, dist)
-├── package.json                # Dépendances npm et scripts
-└── README.md                   # Ce fichier
+│   └── basic.test.js           # Test scripts
+├── .gitignore                  # Git exclusions (node_modules, .env, dist)
+├── package.json                # npm dependencies and scripts
+└── README.md                   # This file
 ```
-## Collaborate 
+## Collaboration
 
-#### Proposer une nouvelle fonctionnalité
+#### Proposing a new feature
 ```bash 
-# 1. Issue : Ouvrir une issue sur GitHub décrivant la feauture
-# 2. Discussion : Attendre validation ou feedback
-# 3. Pull Request : Créer une branche feature/nom-feature et soumettre
+# 1. Issue: Open an issue on GitHub describing the feature.
+# 2. Discussion: Wait for validation or feedback.
+# 3. Pull Request: Create a branch feature/feature-name and submit.
 ```
 
-### Workflow Git 
+### Git Workflow
 
 ```bash
-# Branche principale
-main        # Code stable, déployable
+# Main Branch
+main        # Stable code, deployable
 
-# Branche de développement
-develop     # Intégration des features
+# Development Branch
+develop     # Feature integration
 
-# Branches de travail
-feature/prototype # Prototype
+# Working Branches
+feature/prototype # Prototype development
 ```
 
-## Liscence 
-Ce projet est sous licence MIT
+## License
+This project is licensed under the MIT License.
 
 ## Contact 
-Email : varennikvika@gmail.com ou par des issues
+Email: varennikvika@gmail.com or via GitHub Issues.

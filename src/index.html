@@ -84,24 +84,69 @@
             <span class="close-modal">&times;</span>
             <h1>HoloSpace</h1>
             <p class="subtitle">Accédez à votre univers personnel</p>
-            
             <div id="google-btn-container"></div>
         </div>
     </div>
 
     <script>
- // API URL
+// ==========================================
+// 1. CONFIGURATION & COOKIE HELPERS
+// ==========================================
+
 const API_URL = 'http://localhost:3000';
 
-// Modal elements
+/**
+ * Sets a cookie in the browser.
+ * @param {string} name - Name of the cookie.
+ * @param {string} value - Data to store.
+ * @param {number} days - Expiration time in days.
+ */
+function setCookie(name, value, days) {
+    let expires = "";
+    if (days) {
+        const date = new Date();
+        // Convert days to milliseconds for the Date object
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        expires = "; expires=" + date.toUTCString();
+    }
+    // SameSite=Lax is a security standard to prevent CSRF
+    document.cookie = name + "=" + (value || "") + expires + "; path=/; SameSite=Lax";
+}
+
+/**
+ * Gets a cookie value by name.
+ */
+function getCookie(name) {
+    const nameEQ = name + "=";
+    const ca = document.cookie.split(';'); // Split all cookies into an array
+    for (let i = 0; i < ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) == ' ') c = c.substring(1, c.length); // Clean up whitespace
+        if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+    }
+    return null;
+}
+
+/**
+ * Deletes a cookie by forcing it to expire immediately.
+ */
+function deleteCookie(name) {
+    document.cookie = name + '=; Max-Age=-99999999; path=/;';
+}
+
+// ==========================================
+// 2. MODAL & UI INTERACTION
+// ==========================================
+
 const modal = document.getElementById('login-modal');
 const openBtns = document.querySelectorAll('.open-modal');
 const closeBtn = document.querySelector('.close-modal');
 
+// Trigger modal only if no active session cookie exists
 openBtns.forEach(btn => {
     btn.addEventListener('click', (e) => {
         e.preventDefault();
-        if (!localStorage.getItem('holospace_jwt')) {
+        if (!getCookie('holospace_jwt')) {
             modal.classList.add('active');
         }
     });
@@ -109,22 +154,32 @@ openBtns.forEach(btn => {
 
 closeBtn.onclick = () => modal.classList.remove('active');
 
+// Close modal if user clicks outside the box
 window.onclick = (e) => {
     if (e.target === modal) modal.classList.remove('active');
 };
 
-// Initialize Google Sign-In
+// ==========================================
+// 3. CORE AUTHENTICATION LOGIC
+// ==========================================
+
 window.onload = function () {
-    // Check if already logged in
-    const savedJwt = localStorage.getItem('holospace_jwt');
-    const savedUser = localStorage.getItem('holospace_user');
+    // Check if user is already logged in via cookies on page load (prevents disconnect on refresh)
+    const savedJwt = getCookie('holospace_jwt');
+    const savedUser = getCookie('holospace_user');
     
     if (savedJwt && savedUser) {
-        const userData = JSON.parse(savedUser);
-        updateUI(userData);
-        validateToken(savedJwt);
+        try {
+            // decodeURIComponent is vital because JSON strings contain special characters cookies dislike
+            const userData = JSON.parse(decodeURIComponent(savedUser));
+            updateUI(userData);
+            validateToken(savedJwt); // Background check to ensure session is still valid on server
+        } catch (e) {
+            console.error("Failed to parse session cookies:", e);
+        }
     }
     
+    // Initialize Google Auth
     google.accounts.id.initialize({
         client_id: "537399217521-4v13efe1d9kal8hs5f0vpjp2gm9598e8.apps.googleusercontent.com",
         callback: handleCredentialResponse,
@@ -132,16 +187,19 @@ window.onload = function () {
         auto_select: false
     });
 
+    // Render the button
     google.accounts.id.renderButton(
         document.getElementById("google-btn-container"),
         { theme: "outline", size: "large", width: "300", shape: "pill" }
     );
 };
 
-// Handle Google Sign-In
+/**
+ * Callback function after Google sign-in is successful.
+ */
 async function handleCredentialResponse(response) {
     try {
-        // Send Google token to backend
+        // Send Google token to your backend for verification
         const res = await fetch(`${API_URL}/auth/google`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -150,20 +208,15 @@ async function handleCredentialResponse(response) {
         
         const data = await res.json();
         
-        if (!data.success) {
-            throw new Error(data.error);
-        }
+        if (!data.success) throw new Error(data.error);
         
-        // Save JWT and user data
-        localStorage.setItem('holospace_jwt', data.jwt);
-        localStorage.setItem('holospace_user', JSON.stringify(data.user));
+        // --- COOKIE STORAGE ---
+        // Store JWT and User data for 7 days
+        setCookie('holospace_jwt', data.jwt, 7);
+        setCookie('holospace_user', encodeURIComponent(JSON.stringify(data.user)), 7);
         
-        // Close modal
         modal.classList.remove('active');
-        
-        // Update UI
         updateUI(data.user);
-        
         alert("Connexion réussie !");
         
     } catch (error) {
@@ -172,8 +225,11 @@ async function handleCredentialResponse(response) {
     }
 }
 
-// Update UI with user data
+/**
+ * Updates the page content with user-specific data.
+ */
 function updateUI(userData) {
+    // Change the main headline
     document.getElementById('main-title').innerHTML = "Bienvenue, <span>" + userData.given_name + "</span>";
     
     const userImg = document.getElementById('user-photo');
@@ -184,57 +240,47 @@ function updateUI(userData) {
         userImg.src = userData.picture;
         userImg.style.display = "inline-block";
         navText.style.display = "none";
-        navBtn.classList.remove('open-modal');
+        navBtn.classList.remove('open-modal'); // Stop opening modal once logged in
         
-        // Add logout click handler
+        // Setup logout trigger on profile click
         navBtn.onclick = () => {
-            if (confirm('Déconnexion ?')) {
+            if (confirm('Voulez-vous vous déconnecter ?')) {
                 logout();
             }
         };
     }
 }
 
-// Validate token with backend
+/**
+ * Checks if the JWT is still valid with the server.
+ */
 async function validateToken(token) {
     try {
         const res = await fetch(`${API_URL}/user/profile`, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         
-        if (!res.ok) {
-            // Token invalid, logout
-            logout();
-        }
+        if (!res.ok) logout(); // If token is expired/invalid, force logout
     } catch (error) {
-        console.error('Token validation error:', error);
+        console.error('Validation error:', error);
     }
 }
 
-// Logout function
+/**
+ * Clears session data and reloads the app.
+ */
 function logout() {
-    localStorage.removeItem('holospace_jwt');
-    localStorage.removeItem('holospace_user');
-    location.reload();
+    deleteCookie('holospace_jwt');
+    deleteCookie('holospace_user');
+    location.reload(); // Hard refresh to reset the state
 }
 
-// Helper to decode Google JWT (for fallback only)
-function decodeJwtResponse(token) {
-    let base64Url = token.split('.')[1];
-    let base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    let jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
-        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-    }).join(''));
-    return JSON.parse(jsonPayload);
-}
-
-// Helper function to make authenticated requests
+/**
+ * Global helper for making authenticated API calls.
+ */
 async function fetchWithAuth(url, options = {}) {
-    const token = localStorage.getItem('holospace_jwt');
-    
-    if (!token) {
-        throw new Error('Not authenticated');
-    }
+    const token = getCookie('holospace_jwt');
+    if (!token) throw new Error('Not authenticated');
     
     return fetch(url, {
         ...options,
