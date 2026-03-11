@@ -46,7 +46,8 @@ npm install
 npm run dev
 
 # Backend Mode 
-node server.js
+cd server
+node server.mjs
 
 # Run Tests
 npm test
