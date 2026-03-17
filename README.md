@@ -40,8 +40,6 @@ cd holospace
 # Install packages
 npm install
 
-# Build and Launch
-
 # Development Mode
 npm run dev
 
@@ -104,7 +102,6 @@ develop     # Feature integration
 feature/prototype # Prototype development
 ```
 
-// TODO
 ## License
 This project is licensed under the MIT License.
 
