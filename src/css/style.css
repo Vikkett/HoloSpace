@@ -246,6 +246,77 @@ footer {
 }
 
 
+
+
+/* --- HOW IT WORKS SECTION --- */
+.steps {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin-top: 50px;
+    flex-wrap: wrap;
+    padding: 0 20px;
+}
+
+.step-card {
+    flex: 1;
+    min-width: 280px;
+    max-width: 350px;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 40px 30px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    text-align: center;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.step-card:hover {
+    transform: translateY(-10px);
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(0, 212, 255, 0.3);
+}
+
+/* Highlight the Try card to make it pop */
+.step-card.highlight {
+    border: 1px solid #00d4ff;
+    box-shadow: 0 0 20px rgba(0, 212, 255, 0.1);
+}
+
+.step-number {
+    font-size: 3rem;
+    font-weight: 800;
+    color: #00d4ff;
+    margin-bottom: 20px;
+    line-height: 1;
+}
+
+/* --- TRY BUTTON --- */
+.btn-try {
+    margin-top: auto; /* Pushes button to bottom of card */
+    padding: 12px 35px;
+    background: transparent;
+    border: 2px solid #00d4ff;
+    color: #00d4ff;
+    border-radius: 50px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+}
+
+.btn-try:hover {
+    background: #00d4ff;
+    color: #0a0a20;
+    box-shadow: 0 0 25px rgba(0, 212, 255, 0.5);
+}
+
+
+
 /* responsive*/
 
 @keyframes stars {

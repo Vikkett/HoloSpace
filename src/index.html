@@ -38,16 +38,31 @@
     <section id="about">
         <h2>Comment ça marche</h2>
         <div class="steps">
-            <div>
-                <h3>1. Connectez-vous</h3>
-                <p>Utilisez votre compte Google pour une analyse instantanée.</p>
+            <div class="step-card">
+                <div class="step-number">1</div>
+                <h3>Connectez-vous</h3>
+                <p>Utilisez votre compte Google pour une analyse instantanée de votre essence.</p>
             </div>
-            <div>
-                <h3>2. Explorez</h3>
-                <p>Votre univers prend vie et devient navigable.</p>
+    
+            <div class="step-card">
+                <div class="step-number">2</div>
+                <h3>Explorez</h3>
+                <p>Votre univers prend vie sous vos yeux et devient totalement navigable en 3D.</p>
+            </div>
+    
+            <div class="step-card highlight">
+                <div class="step-number">3</div>
+                <h3>Essayer</h3>
+                <p>Pas encore prêt ? Découvrez un univers généré aléatoirement dès maintenant.</p>
+                <button onclick="enterDemo()" class="btn-try">Lancer la démo</button>
             </div>
         </div>
     </section>
+
+
+
+
+
 
     <section id="features">
         <h2>Votre univers en 3D</h2>
@@ -291,6 +306,22 @@
             }
         };
         
+
+        function enterDemo() {
+    // 1. Notify the user
+    showNotification('Génération de votre galaxie de test...', 'info');
+    
+    // 2. Set the temporary session flag
+    // sessionStorage only lasts until the tab is closed
+    sessionStorage.setItem('holospace_demo', 'true');
+    
+    // 3. Move to the universe page after 1 second
+    setTimeout(() => {
+        window.location.href = 'universe.html';
+    }, 1000);
+}
+
+
         // ==========================================
         // AUTHENTICATION HANDLERS
         // ==========================================
