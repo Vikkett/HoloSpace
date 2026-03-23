@@ -84,7 +84,7 @@ nav {
     background-size: 200px 200px;
 
     /* animation légère */
-    animation: stars 5s ease-in-out infinite;
+    animation: stars 6s ease-in-out infinite;
     /* pas cliquable */
     pointer-events: none;
 }
@@ -139,23 +139,30 @@ nav {
 }
 
 .planet {
-    /* taille de la planète */
-    width: 260px;
-    height: 260px;
-    /* forme ronde */
-    border-radius: 50%;
-    /* dégradé pour effet volume */
-    background: radial-gradient(circle at 30% 30%, #00d4ff, #7000ff);
-    /* position libre */
+    /* Keep your positioning from your original code */
+    width: 300px;
+    height: 300px;
     position: absolute;
-    /* placement à droite */
     right: 10%;
-    /* centré verticalement */
     top: 50%;
-    /* animation de flottement */
+    transform: translateY(-50%);
+    
+    /* REMOVE the background gradient so Three.js can be seen */
+    background: transparent !important; 
+    
+    /* Keep your shadow and animation */
     animation: float 6s ease-in-out infinite;
-    /* lumière autour */
-    box-shadow: 0 0 40px rgba(0, 212, 255, 0.4);
+
+    
+    /* Ensure the 3D canvas stays inside */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Add this to ensure the 3D Earth doesn't have a border */
+.planet canvas {
+    outline: none;
 }
 
 section {
