@@ -3,141 +3,285 @@
 <head>
     <meta charset="UTF-8">
     <title>HoloSpace - Exploration</title>
-    <style>
-        body { margin: 0; background: #000000; color: white; overflow: hidden; font-family: 'Segoe UI', sans-serif; }
-        .ui { position: fixed; top: 20px; left: 20px; z-index: 100; pointer-events: none; }
-        .mode-label { 
-            background: rgba(0, 212, 255, 0.1); 
-            border: 1px solid #00d4ff; 
-            padding: 8px 20px; 
-            border-radius: 30px; 
-            font-size: 0.75rem; 
-            text-transform: uppercase; 
-            letter-spacing: 2px;
-            box-shadow: 0 0 15px rgba(0, 212, 255, 0.3);
-        }
-        canvas { display: block; }
-    </style>
+
+    <link rel="stylesheet" href="./css/universe.css">
 </head>
+
+<!-- Body of the document -->
 <body>
+
+    <!-- UI overlay container -->
     <div class="ui">
-        <div id="mode-indicator" class="mode-label">Initialisation...</div>
+
+        <!-- Mode indicator text -->
+        <div id="mode-indicator" class="mode-label">Initialisation des systèmes...</div>
     </div>
 
+    <!-- Import Three.js library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
+    <!-- Import OrbitControls for camera movement -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+    <!-- Main JavaScript logic -->
     <script>
- let scene, camera, renderer, stars;
-let planets = []; // Array to keep track of planets for animation
 
-window.onload = function() {
-    const hasJwt = document.cookie.includes('holospace_jwt');
-    const isDemo = sessionStorage.getItem('holospace_demo') === 'true';
+        // Declare main variables for scene setup
+        let scene, camera, renderer, stars, controls;
 
-    if (hasJwt) {
-        document.getElementById('mode-indicator').innerText = "✨ Univers Personnel";
-        initThree(false);
-    } else if (isDemo) {
-        document.getElementById('mode-indicator').innerText = "🌌 Mode Démonstration";
-        initThree(true);
-    } else {
-        window.location.href = 'index.html';
-    }
-};
+        // Array to store planet objects
+        let planets = [];
 
-function initThree(isDemo) {
-    // 1. Scene & Camera
-    scene = new THREE.Scene();
-    camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 2000);
-    camera.position.z = 100;
+        // Run when page loads
+        window.onload = function() {
 
-    renderer = new THREE.WebGLRenderer({ antialias: true });
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(window.devicePixelRatio);
-    document.body.appendChild(renderer.domElement);
+            // Check if JWT token exists in cookies
+            const hasJwt = document.cookie.includes('holospace_jwt');
 
-    // 2. Lights (Crucial for 3D shapes)
-    const ambientLight = new THREE.AmbientLight(0x404040, 2); // Soft white light
-    scene.add(ambientLight);
+            // Check if demo mode is enabled in session storage
+            const isDemo = sessionStorage.getItem('holospace_demo') === 'true';
 
-    const sunLight = new THREE.PointLight(0xffffff, 3, 500); // Bright light from the center
-    scene.add(sunLight);
+            // If authenticated user
+            if (hasJwt) {
 
-    // 3. The Sun (Center of the Galaxy)
-    const sunGeo = new THREE.SphereGeometry(12, 32, 32);
-    const sunMat = new THREE.MeshBasicMaterial({ color: 0xffcc00 });
-    const sun = new THREE.Mesh(sunGeo, sunMat);
-    scene.add(sun);
+                // Update UI text
+                document.getElementById('mode-indicator').innerText = "✨ Univers Personnel";
 
-    // 4. Create Planets
-    // In Demo mode, we generate 5 random planets
-    if (isDemo) {
-        for(let i = 0; i < 5; i++) {
-            const size = Math.random() * 3 + 1;
-            const dist = 40 + (i * 25);
-            const color = new THREE.Color().setHSL(Math.random(), 0.7, 0.5);
-            const speed = (Math.random() * 0.01) + 0.005;
-            
-            createPlanet(size, dist, color, speed);
-        }
-    }
+                // Initialize scene without demo planets
+                initThree(false);
 
-    // 5. The Starfield (Background)
-    const starGeometry = new THREE.BufferGeometry();
-    const starMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: 0.7 });
-    const starVertices = [];
-    for (let i = 0; i < 10000; i++) {
-        starVertices.push((Math.random() - 0.5) * 2000, (Math.random() - 0.5) * 2000, (Math.random() - 0.5) * 2000);
-    }
-    starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starVertices, 3));
-    stars = new THREE.Points(starGeometry, starMaterial);
-    scene.add(stars);
+            // If demo mode
+            } else if (isDemo) {
 
-    // Helper Function to build a planet
-    function createPlanet(size, dist, color, speed) {
-        const geo = new THREE.SphereGeometry(size, 32, 32);
-        const mat = new THREE.MeshStandardMaterial({ color: color, roughness: 0.5 });
-        const mesh = new THREE.Mesh(geo, mat);
-        
-        // Custom properties for animation
-        const planetObj = {
-            mesh: mesh,
-            distance: dist,
-            speed: speed,
-            angle: Math.random() * Math.PI * 2
+                // Update UI text
+                document.getElementById('mode-indicator').innerText = "🌌 Mode Démonstration";
+
+                // Initialize scene with demo planets
+                initThree(true);
+
+            // Otherwise redirect to homepage
+            } else {
+                window.location.href = 'index.html';
+            }
         };
-        
-        planets.push(planetObj);
-        scene.add(mesh);
-    }
 
-    // 6. Animation Loop
-    function animate() {
-        requestAnimationFrame(animate);
+        // Function to initialize Three.js scene
+        function initThree(isDemo) {
 
-        // Animate Planets (Orbiting)
-        planets.forEach(p => {
-            p.angle += p.speed;
-            p.mesh.position.x = Math.cos(p.angle) * p.distance;
-            p.mesh.position.z = Math.sin(p.angle) * p.distance;
-            p.mesh.rotation.y += 0.01; // Spin the planet itself
-        });
+            // Create scene object
+            scene = new THREE.Scene();
 
-        // Rotate Starfield slowly
-        stars.rotation.y += 0.0002;
+            // Create camera with perspective view
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 3000);
 
-        renderer.render(scene, camera);
-    }
+            // Set camera position
+            camera.position.set(0, 150, 400);
 
-    animate();
+            // Create renderer with anti-aliasing
+            renderer = new THREE.WebGLRenderer({ antialias: true });
 
-    // Window Resize Handler
-    window.addEventListener('resize', () => {
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(window.innerWidth, window.innerHeight);
-    });
-}
+            // Set renderer size to full screen
+            renderer.setSize(window.innerWidth, window.innerHeight);
+
+            // Adjust for device pixel ratio
+            renderer.setPixelRatio(window.devicePixelRatio);
+
+            // Add canvas to DOM
+            document.body.appendChild(renderer.domElement);
+
+            // Enable orbit controls for camera
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+
+            // Enable smooth camera movement
+            controls.enableDamping = true;
+
+            // Set damping factor
+            controls.dampingFactor = 0.05;
+
+            // Maximum zoom distance
+            controls.maxDistance = 1000;
+
+            // Minimum zoom distance
+            controls.minDistance = 50;
+
+            // Add ambient light
+            const ambientLight = new THREE.AmbientLight(0x404040, 0.5);
+            scene.add(ambientLight);
+
+            // Add point light (sun)
+            const sunLight = new THREE.PointLight(0xffffff, 2, 1000);
+            sunLight.position.set(0, 0, 0);
+            scene.add(sunLight);
+
+            // Create sun geometry
+            const sunGeo = new THREE.SphereGeometry(25, 64, 64);
+
+            // Create sun material
+            const sunMat = new THREE.MeshBasicMaterial({ color: 0xffdd44 });
+
+            // Create sun mesh
+            const sun = new THREE.Mesh(sunGeo, sunMat);
+            scene.add(sun);
+
+            // Create glow geometry
+            const sunGlowGeo = new THREE.SphereGeometry(28, 64, 64);
+
+            // Create glow material
+            const sunGlowMat = new THREE.MeshBasicMaterial({ color: 0xffaa00, transparent: true, opacity: 0.15 });
+
+            // Create glow mesh
+            const sunGlow = new THREE.Mesh(sunGlowGeo, sunGlowMat);
+            scene.add(sunGlow);
+
+            // If demo mode, create planets
+            if (isDemo) {
+
+                // Define planet data
+                const planetData = [
+                    { size: 5, dist: 70, color: 0x888888, speed: 0.015, rings: false },
+                    { size: 9, dist: 120, color: 0xe3bb76, speed: 0.01, rings: false },
+                    { size: 10, dist: 180, color: 0x2271b3, speed: 0.008, clouds: true },
+                    { size: 14, dist: 260, color: 0xc44a32, speed: 0.005, rings: true },
+                    { size: 12, dist: 350, color: 0x3dced1, speed: 0.003, rings: false }
+                ];
+
+                // Loop through each planet config
+                planetData.forEach(data => {
+                    createDetailedPlanet(data);
+                });
+            }
+
+            // Create starfield geometry
+            const starGeo = new THREE.BufferGeometry();
+
+            // Array for star positions
+            const starVertices = [];
+
+            // Generate random stars
+            for (let i = 0; i < 15000; i++) {
+                const x = (Math.random() - 0.5) * 2000;
+                const y = (Math.random() - 0.5) * 2000;
+                const z = (Math.random() - 0.5) * 2000;
+                starVertices.push(x, y, z);
+            }
+
+            // Attach positions to geometry
+            starGeo.setAttribute('position', new THREE.Float32BufferAttribute(starVertices, 3));
+
+            // Create star material
+            const starMat = new THREE.PointsMaterial({ color: 0xffffff, size: 0.5, transparent: true });
+
+            // Create star points
+            stars = new THREE.Points(starGeo, starMat);
+
+            // Add stars to scene
+            scene.add(stars);
+
+            // Function to create planets
+            function createDetailedPlanet(data) {
+
+                // Create group for planet system
+                const group = new THREE.Group();
+
+                // Planet geometry
+                const geo = new THREE.SphereGeometry(data.size, 64, 64);
+
+                // Planet material
+                const mat = new THREE.MeshStandardMaterial({ 
+                    color: data.color,
+                    roughness: 0.7,
+                    metalness: 0.1
+                });
+
+                // Planet mesh
+                const mesh = new THREE.Mesh(geo, mat);
+                group.add(mesh);
+
+                // If clouds exist
+                if (data.clouds) {
+
+                    const cloudGeo = new THREE.SphereGeometry(data.size + 0.2, 64, 64);
+
+                    const cloudMat = new THREE.MeshLambertMaterial({ 
+                        color: 0xffffff, 
+                        transparent: true, 
+                        opacity: 0.3 
+                    });
+
+                    const clouds = new THREE.Mesh(cloudGeo, cloudMat);
+                    group.add(clouds);
+                }
+
+                // If rings exist
+                if (data.rings) {
+
+                    const ringGeo = new THREE.RingGeometry(data.size * 1.6, data.size * 2.8, 64);
+
+                    const ringMat = new THREE.MeshStandardMaterial({ 
+                        color: data.color, 
+                        side: THREE.DoubleSide, 
+                        transparent: true, 
+                        opacity: 0.4 
+                    });
+
+                    const rings = new THREE.Mesh(ringGeo, ringMat);
+
+                    // Rotate rings
+                    rings.rotation.x = Math.PI / 2.2;
+
+                    group.add(rings);
+                }
+
+                // Store planet data
+                const planetObj = {
+                    group: group,
+                    distance: data.dist,
+                    speed: data.speed,
+                    angle: Math.random() * Math.PI * 2,
+                    rotationSpeed: Math.random() * 0.02
+                };
+
+                // Add to planets array
+                planets.push(planetObj);
+
+                // Add to scene
+                scene.add(group);
+            }
+
+            // Animation loop
+            function animate() {
+
+                // Request next frame
+                requestAnimationFrame(animate);
+
+                // Update planets
+                planets.forEach(p => {
+                    p.angle += p.speed;
+                    p.group.position.x = Math.cos(p.angle) * p.distance;
+                    p.group.position.z = Math.sin(p.angle) * p.distance;
+                    p.group.rotation.y += p.rotationSpeed;
+                });
+
+                // Rotate stars slowly
+                stars.rotation.y += 0.0001;
+
+                // Update controls
+                controls.update();
+
+                // Render scene
+                renderer.render(scene, camera);
+            }
+
+            // Start animation
+            animate();
+
+            // Handle window resize
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+        }
     </script>
 </body>
 </html>
