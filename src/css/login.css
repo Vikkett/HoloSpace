@@ -1,390 +1,246 @@
-/* Modal overlay (background behind the login box) */
-.modal-overlay {
-    /* Hidden by default */
+/* ==========================================
+   MODAL OVERLAY (Background)
+   ========================================== */
+   .modal-overlay {
     display: none; 
-    
-    /* Fixed position to cover entire screen */
     position: fixed;
-    
-    /* Align to top-left corner */
     top: 0;
     left: 0;
-    
-    /* Full width and height */
     width: 100%;
     height: 100%;
-    
-    /* Dark semi-transparent background */
     background: rgba(0, 0, 0, 0.85);
-    
-    /* Blur effect behind modal */
-    backdrop-filter: blur(8px);
-    
-    /* Very high z-index to stay on top */
+    backdrop-filter: blur(12px);
     z-index: 9999;
-    
-    /* Center content horizontally */
     justify-content: center;
-    
-    /* Center content vertically */
     align-items: center;
+    transition: all 0.3s ease;
 }
 
-/* When modal is active (visible) */
 .modal-overlay.active {
-    /* Use flex to center the modal */
     display: flex;
-}
-
-/* Login/authentication box */
-.auth-box {
-    /* Dark background */
-    background: #0a0a12; 
-    
-    /* Inner spacing */
-    padding: 50px 40px;
-    
-    /* Rounded corners */
-    border-radius: 20px;
-    
-    /* Neon border */
-    border: 1px solid #00d4ff;
-    
-    /* Responsive width */
-    width: 90%;
-    
-    /* Max width limit */
-    max-width: 400px;
-    
-    /* Center text */
-    text-align: center;
-    
-    /* For positioning child elements (like close button) */
-    position: relative;
-    
-    /* Glow effect */
-    box-shadow: 0 0 30px rgba(0, 212, 255, 0.3);
-}
-
-/* Title inside auth box */
-.auth-box h1 {
-    /* White text */
-    color: #fff;
-    
-    /* Space below */
-    margin-bottom: 10px;
-    
-    /* Large font */
-    font-size: 2rem;
-}
-
-/* Subtitle text */
-.subtitle {
-    /* Light gray color */
-    color: #aaa;
-    
-    /* Space below */
-    margin-bottom: 30px;
-    
-    /* Smaller font */
-    font-size: 0.9rem;
-}
-
-/* Close button (X icon) */
-.close-modal {
-    /* Position inside top-right corner */
-    position: absolute;
-    top: 15px;
-    right: 20px;
-    
-    /* Large icon */
-    font-size: 28px;
-    
-    /* Neon color */
-    color: #00d4ff;
-    
-    /* Pointer cursor */
-    cursor: pointer;
-    
-    /* Smooth hover animation */
-    transition: transform 0.2s;
-}
-
-/* Hover effect for close button */
-.close-modal:hover {
-    /* Slight zoom */
-    transform: scale(1.2);
-}
-
-/* Container for Google button */
-#google-btn-container {
-    /* Flex layout */
-    display: flex;
-    
-    /* Center horizontally */
-    justify-content: center;
-    
-    /* Space above */
-    margin-top: 10px;
 }
 
 /* ==========================================
-   NOTIFICATION SYSTEM - Space Theme
+   AUTH & LOGOUT BOXES (The Windows)
    ========================================== */
-
-/* Notification container (top-right corner) */
-.notification-container {
-    /* Fixed position */
-    position: fixed;
-    
-    /* Distance from top */
-    top: 20px;
-    
-    /* Distance from right */
-    right: 20px;
-    
-    /* Above most elements */
-    z-index: 1000;
-    
-    /* Stack notifications vertically */
-    display: flex;
-    flex-direction: column;
-    
-    /* Space between notifications */
-    gap: 10px;
-    
-    /* Allow clicks only on children */
-    pointer-events: none;
-}
-
-/* Individual notification */
-.notification {
-    /* Allow interaction */
-    pointer-events: all;
-    
-    /* Minimum width */
-    min-width: 300px;
-    
-    /* Maximum width */
+.auth-box {
+    background: rgba(10, 10, 18, 0.9);
+    padding: 50px 40px;
+    border-radius: 30px; /* Softer, stylish corners */
+    border: 1px solid rgba(0, 212, 255, 0.3);
+    width: 90%;
     max-width: 400px;
-    
-    /* Padding */
-    padding: 16px 20px;
-    
-    /* Rounded corners */
-    border-radius: 12px;
-    
-    /* Flex layout */
-    display: flex;
-    align-items: center;
-    
-    /* Space between elements */
-    gap: 12px;
-    
-    /* Shadow */
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-    
-    /* Glass effect */
-    backdrop-filter: blur(10px);
-    
-    /* Light border */
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    
-    /* Start off-screen */
-    transform: translateX(120%);
-    
-    /* Invisible initially */
-    opacity: 0;
-    
-    /* Slide-in animation */
-    animation: slideIn 0.4s ease forwards;
-    
-    /* Relative for child elements */
+    text-align: center;
     position: relative;
-    
-    /* Hide overflow */
-    overflow: hidden;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 30px rgba(0, 212, 255, 0.1);
+    backdrop-filter: blur(20px);
 }
 
-/* Top glowing line */
-.notification::before {
-    content: '';
-    
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    
-    /* Thin line */
-    height: 2px;
-    
-    /* Gradient glow */
-    background: linear-gradient(90deg, transparent, currentColor, transparent);
-    
-    opacity: 0.5;
+/* Specific Style for Logout Window (Neon Red Soft) */
+.logout-box {
+    border: 1px solid rgba(255, 50, 100, 0.4) !important;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), 0 0 30px rgba(255, 50, 100, 0.15) !important;
 }
 
-/* Success notification style */
-.notification.success {
-    background: rgba(0, 212, 255, 0.1);
-    color: #00d4ff;
-    border-color: rgba(0, 212, 255, 0.3);
-    
-    /* Glow + inner highlight */
-    box-shadow: 0 8px 32px rgba(0, 212, 255, 0.2), 
-                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+.auth-box h1, .auth-box h2 {
+    color: #fff;
+    margin-bottom: 10px;
+    font-size: 2rem;
+    font-weight: 300;
+    letter-spacing: 1px;
 }
 
-/* Error notification style */
-.notification.error {
-    background: rgba(255, 50, 100, 0.1);
+.logout-box h2 {
     color: #ff3264;
-    border-color: rgba(255, 50, 100, 0.3);
-    
-    box-shadow: 0 8px 32px rgba(255, 50, 100, 0.2),
-                inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
-/* Info notification style */
-.notification.info {
-    background: rgba(112, 0, 255, 0.1);
-    color: #a855f7;
-    border-color: rgba(112, 0, 255, 0.3);
-    
-    box-shadow: 0 8px 32px rgba(112, 0, 255, 0.2),
-                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+.subtitle {
+    color: rgba(255, 255, 255, 0.6);
+    margin-bottom: 30px;
+    font-size: 0.9rem;
 }
 
-/* Warning notification style */
-.notification.warning {
-    background: rgba(255, 170, 0, 0.1);
-    color: #ffaa00;
-    border-color: rgba(255, 170, 0, 0.3);
-    
-    box-shadow: 0 8px 32px rgba(255, 170, 0, 0.2),
-                inset 0 1px 0 rgba(255, 255, 255, 0.1);
-}
-
-/* Icon inside notification */
-.notification-icon {
-    width: 24px;
-    height: 24px;
-    
-    /* Prevent shrinking */
-    flex-shrink: 0;
-    
+/* ==========================================
+   BUTTONS (Stadium Form)
+   ========================================== */
+.logout-actions {
     display: flex;
-    align-items: center;
+    gap: 15px;
     justify-content: center;
-    
-    /* Icon size */
-    font-size: 20px;
+    margin-top: 30px;
 }
 
-/* Message text */
-.notification-message {
-    /* Take remaining space */
-    flex: 1;
-    
-    font-size: 14px;
-    line-height: 1.4;
-    font-weight: 500;
-}
-
-/* Close button inside notification */
-.notification-close {
-    width: 24px;
-    height: 24px;
-    
+.btn-confirm-logout {
+    background: #ff3264;
+    color: white;
     border: none;
-    
-    /* Transparent background */
-    background: rgba(255, 255, 255, 0.1);
-    
-    /* Inherit color */
-    color: inherit;
-    
-    border-radius: 6px;
-    
+    padding: 12px 30px;
+    border-radius: 50px; /* Stadium form */
     cursor: pointer;
-    
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    
-    font-size: 16px;
-    
-    line-height: 1;
-    
-    /* Smooth animation */
-    transition: all 0.2s ease;
-    
+    font-weight: 500;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 15px rgba(255, 50, 100, 0.3);
+}
+
+.btn-confirm-logout:hover {
+    background: #ff5080;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(255, 50, 100, 0.5);
+}
+
+.btn-cancel {
+    background: transparent;
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 12px 30px;
+    border-radius: 50px; /* Stadium form */
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-cancel:hover {
+    border-color: #00d4ff;
+    color: #00d4ff;
+    background: rgba(0, 212, 255, 0.05);
+    transform: translateY(-3px);
+}
+
+.close-modal {
+    position: absolute;
+    top: 20px;
+    right: 25px;
+    font-size: 24px;
+    color: #00d4ff;
+    cursor: pointer;
+    transition: transform 0.2s;
     opacity: 0.7;
 }
 
-/* Hover effect for close button */
-.notification-close:hover {
-    background: rgba(255, 255, 255, 0.2);
+.close-modal:hover {
+    transform: scale(1.2);
     opacity: 1;
+}
+
+/* ==========================================
+   NAVBAR & PROFILE IMAGE FIX
+   ========================================== */
+.links {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+#user-photo {
+    width: 40px !important;
+    height: 40px !important;
+    border-radius: 50% !important; /* Perfect Circle */
+    object-fit: cover !important;
+    border: 2px solid #00d4ff;
+    box-shadow: 0 0 15px rgba(0, 212, 255, 0.3);
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+#user-photo:hover {
     transform: scale(1.1);
+    box-shadow: 0 0 20px rgba(0, 212, 255, 0.6);
 }
 
-/* Progress bar at bottom */
-.notification-progress {
+/* ==========================================
+   USER MENU DROPDOWN
+   ========================================== */
+.dropdown-menu {
     position: absolute;
-    bottom: 0;
-    left: 0;
-    
-    /* Thin line */
-    height: 2px;
-    
-    /* Same color as text */
-    background: currentColor;
-    
-    opacity: 0.5;
-    
-    /* Shrinks over time */
-    animation: progress 4s linear forwards;
+    top: 110%; /* Under nav */
+    right: 0;
+    background: rgba(10, 10, 20, 0.95);
+    border: 1px solid rgba(0, 212, 255, 0.3);
+    border-radius: 15px;
+    min-width: 200px;
+    display: none;
+    z-index: 1000;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(15px);
+    overflow: hidden;
+    padding: 10px 0;
 }
 
-/* Exit animation */
+.dropdown-menu.active {
+    display: block;
+    animation: navFadeIn 0.3s ease;
+}
+
+.dropdown-menu a {
+    display: block !important;
+    padding: 12px 20px !important;
+    color: white !important;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+    background: transparent !important;
+    border: none !important;
+}
+
+.dropdown-menu a:hover {
+    background: rgba(0, 212, 255, 0.1) !important;
+    color: #00d4ff !important;
+    padding-left: 25px !important;
+}
+
+.dropdown-menu hr {
+    border: 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    margin: 5px 0;
+}
+
+.logout-link {
+    color: #ff3264 !important;
+}
+
+/* ==========================================
+   NOTIFICATIONS
+   ========================================== */
+.notification-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 10000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.notification {
+    min-width: 280px;
+    padding: 15px 20px;
+    border-radius: 15px;
+    background: rgba(15, 15, 25, 0.8);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    animation: slideIn 0.4s ease forwards;
+}
+
+/* Animations */
+@keyframes navFadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideIn {
+    from { transform: translateX(120%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slideOut {
+    to { transform: translateX(120%); opacity: 0; }
+}
+
 .notification.hiding {
     animation: slideOut 0.3s ease forwards;
-}
-
-/* Slide-in animation */
-@keyframes slideIn {
-    to {
-        transform: translateX(0);
-        opacity: 1;
-    }
-}
-
-/* Slide-out animation */
-@keyframes slideOut {
-    to {
-        transform: translateX(120%);
-        opacity: 0;
-    }
-}
-
-/* Progress bar animation */
-@keyframes progress {
-    from { width: 100%; }
-    to { width: 0%; }
-}
-
-/* Responsive design for mobile */
-@media (max-width: 480px) {
-    .notification-container {
-        left: 10px;
-        right: 10px;
-        top: 10px;
-    }
-    
-    .notification {
-        min-width: auto;
-        max-width: none;
-        width: 100%;
-    }
 }

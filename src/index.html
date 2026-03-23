@@ -16,10 +16,17 @@
         <div class="links">
             <a href="#about">Découvrir</a>
             <a href="#features">Fonctionnalités</a>
+            
             <a href="#" class="open-modal" id="nav-auth-btn">
                 <span id="nav-text">Commencer</span>
-                <img id="user-photo" src="" alt="Profile" style="display: none; width: 40px; height: 40px; border-radius: 50%; vertical-align: middle; border: 2px solid #00d4ff; object-fit: cover;">
+                <img id="user-photo" src="" alt="Profile" style="display: none;">
             </a>
+
+            <div id="profile-dropdown" class="dropdown-menu">
+                <a href="profile.html">✦ Voir mon profil</a>
+                <hr>
+                <a href="#" onclick="openLogoutModal(event)" class="logout-link">✕ Déconnexion</a>
+            </div>
         </div>
     </nav>
 
@@ -59,11 +66,6 @@
         </div>
     </section>
 
-
-
-
-
-
     <section id="features">
         <h2>Votre univers en 3D</h2>
         <div class="features">
@@ -95,7 +97,6 @@
         <p>© 2026 HoloSpace</p>
     </footer>
 
-    <!-- Login Modal -->
     <div id="login-modal" class="modal-overlay">
         <div class="auth-box">
             <span class="close-modal">&times;</span>
@@ -105,347 +106,150 @@
         </div>
     </div>
 
-    <!-- Notification Container -->
+    <div id="logout-confirm-modal" class="modal-overlay">
+        <div class="auth-box logout-box">
+            <h2>Quitter l'orbite ?</h2>
+            <p>Voulez-vous vraiment vous déconnecter ?</p>
+            <div class="logout-actions">
+                <button onclick="logout()" class="btn-confirm-logout">Déconnexion</button>
+                <button onclick="closeLogoutModal()" class="btn-cancel">Annuler</button>
+            </div>
+        </div>
+    </div>
+
     <div id="notification-container" class="notification-container"></div>
 
     <script>
-        // ==========================================
-        // CONFIGURATION & COOKIES
-        // ==========================================
-        
-        // Base URL of your backend API
         const API_URL = 'http://localhost:3000';
         
-        // Function to set a cookie with optional expiration in days
         function setCookie(name, value, days) {
-            // Initialize expiration string
             let expires = "";
-            
-            // If expiration is provided
             if (days) {
-                // Create a new date object
                 const date = new Date();
-                
-                // Set expiration time in milliseconds
                 date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-                
-                // Convert expiration date to UTC string
                 expires = "; expires=" + date.toUTCString();
             }
-            
-            // Save cookie with SameSite policy
             document.cookie = name + "=" + (value || "") + expires + "; path=/; SameSite=Lax";
         }
         
-        // Function to retrieve a cookie by name
         function getCookie(name) {
-            // Prepare the cookie name pattern
             const nameEQ = name + "=";
-            
-            // Split all cookies into an array
             const ca = document.cookie.split(';');
-            
-            // Loop through cookies
             for (let i = 0; i < ca.length; i++) {
-                let c = ca[i];
-                
-                // Remove leading spaces
-                while (c.charAt(0) == ' ') c = c.substring(1, c.length);
-                
-                // Check if cookie starts with the name
+                let c = ca[i].trim();
                 if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
             }
-            
-            // Return null if not found
             return null;
         }
         
-        // Function to delete a cookie
         function deleteCookie(name) {
-            // Set cookie expiration in the past to delete it
             document.cookie = name + '=; Max-Age=-99999999; path=/;';
         }
         
-        // ==========================================
-        // NOTIFICATION SYSTEM
-        // ==========================================
-        
-        // Function to display a notification message
         function showNotification(message, type = 'info', duration = 4000) {
-            // Get notification container
             const container = document.getElementById('notification-container');
-            
-            // Create notification element
             const notification = document.createElement('div');
-            
-            // Set class with type (success, error, etc.)
             notification.className = `notification ${type}`;
-            
-            // Define icons for each notification type
-            const icons = {
-                success: '✦',
-                error: '✕',
-                info: '◉',
-                warning: '⚠'
-            };
-            
-            // Set notification HTML content
-            notification.innerHTML = `
-                <div class="notification-icon">${icons[type]}</div>
-                <div class="notification-message">${message}</div>
-                <button class="notification-close" onclick="this.parentElement.remove()">×</button>
-                <div class="notification-progress"></div>
-            `;
-            
-            // Add notification to container
+            const icons = { success: '✦', error: '✕', info: '◉', warning: '⚠' };
+            notification.innerHTML = `<div class="notification-icon">${icons[type]}</div><div class="notification-message">${message}</div><button class="notification-close" onclick="this.parentElement.remove()">×</button>`;
             container.appendChild(notification);
-            
-            // Auto-remove after duration
             setTimeout(() => {
                 notification.classList.add('hiding');
                 setTimeout(() => notification.remove(), 300);
             }, duration);
         }
         
-        // ==========================================
-        // MODAL & GOOGLE BUTTON
-        // ==========================================
-        
-        // Get modal element
-        const modal = document.getElementById('login-modal');
-        
-        // Get all buttons that open modal
-        const openBtns = document.querySelectorAll('.open-modal');
-        
-        // Get close button
-        const closeBtn = document.querySelector('.close-modal');
-        
-        // Track if Google button is already rendered
+        const loginModal = document.getElementById('login-modal');
+        const logoutModal = document.getElementById('logout-confirm-modal');
+        const dropdown = document.getElementById('profile-dropdown');
         let googleButtonRendered = false;
         
-        // Run when page loads
         window.onload = function () {
-            // Get saved JWT token
             const savedJwt = getCookie('holospace_jwt');
-            
-            // Get saved user data
             const savedUser = getCookie('holospace_user');
             
-            // If session exists
             if (savedJwt && savedUser) {
                 try {
-                    // Parse stored user JSON
-                    const userData = JSON.parse(decodeURIComponent(savedUser));
-                    
-                    // Update UI with user data
-                    updateUI(userData);
-                    
-                    // Validate token with backend
-                    validateToken(savedJwt);
-                } catch (e) {
-                    // Handle parsing errors
-                    console.error("Failed to parse session cookies:", e);
-                }
+                    updateUI(JSON.parse(decodeURIComponent(savedUser)));
+                } catch (e) { console.error(e); }
             }
             
-            // Initialize Google login system
             google.accounts.id.initialize({
                 client_id: "537399217521-4v13efe1d9kal8hs5f0vpjp2gm9598e8.apps.googleusercontent.com",
-                callback: handleCredentialResponse,
-                ux_mode: "popup",
-                auto_select: false
+                callback: handleCredentialResponse
             });
             
-            // Add click listener to open modal buttons
-            openBtns.forEach(btn => {
-                btn.addEventListener('click', (e) => {
+            document.querySelectorAll('.open-modal').forEach(btn => {
+                btn.onclick = (e) => {
                     e.preventDefault();
-                    
-                    // Only open modal if not logged in
                     if (!getCookie('holospace_jwt')) {
-                        modal.classList.add('active');
-                        
-                        // Render Google button once
+                        loginModal.classList.add('active');
                         if (!googleButtonRendered) {
-                            renderGoogleButton();
+                            google.accounts.id.renderButton(document.getElementById("google-btn-container"), { theme: "outline", size: "large" });
                             googleButtonRendered = true;
                         }
+                    } else if (btn.id === 'nav-auth-btn') {
+                        dropdown.classList.toggle('active');
+                        e.stopPropagation();
                     }
-                });
+                };
             });
         };
         
-        // Function to render Google login button
-        function renderGoogleButton() {
-            const container = document.getElementById("google-btn-container");
-            
-            // Clear container
-            container.innerHTML = '';
-            
-            // Render button using Google API
-            google.accounts.id.renderButton(
-                container,
-                { 
-                    theme: "outline", 
-                    size: "large",
-                    width: "300",
-                    shape: "pill"
-                }
-            );
-        }
-        
-        // Close modal when clicking close button
-        closeBtn.onclick = () => {
-            modal.classList.remove('active');
-        };
-        
-        // Close modal when clicking outside
         window.onclick = (e) => {
-            if (e.target === modal) {
-                modal.classList.remove('active');
+            if (!e.target.closest('#nav-auth-btn') && !e.target.closest('.dropdown-menu')) {
+                dropdown.classList.remove('active');
             }
+            if (e.target === loginModal) loginModal.classList.remove('active');
+            if (e.target === logoutModal) logoutModal.classList.remove('active');
+            if (e.target.classList.contains('close-modal')) loginModal.classList.remove('active');
         };
-        
 
-        function enterDemo() {
-    // 1. Notify the user
-    showNotification('Génération de votre galaxie de test...', 'info');
-    
-    // 2. Set the temporary session flag
-    // sessionStorage only lasts until the tab is closed
-    sessionStorage.setItem('holospace_demo', 'true');
-    
-    // 3. Move to the universe page after 1 second
-    setTimeout(() => {
-        window.location.href = 'universe.html';
-    }, 1000);
-}
+        function openLogoutModal(e) {
+            e.preventDefault();
+            dropdown.classList.remove('active');
+            logoutModal.classList.add('active');
+        }
 
+        function closeLogoutModal() { logoutModal.classList.remove('active'); }
 
-        // ==========================================
-        // AUTHENTICATION HANDLERS
-        // ==========================================
-        
-        // Handle Google login response
+        function updateUI(userData) {
+            document.getElementById('main-title').innerHTML = "Bienvenue, <span>" + userData.given_name + "</span>";
+            const userImg = document.getElementById('user-photo');
+            const navText = document.getElementById('nav-text');
+            if (userData.picture) {
+                userImg.src = userData.picture;
+                userImg.style.display = "inline-block";
+                navText.style.display = "none";
+            }
+        }
+
         async function handleCredentialResponse(response) {
             try {
-                // Send token to backend
                 const res = await fetch(`${API_URL}/auth/google`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ token: response.credential })
                 });
-                
-                // Parse response JSON
                 const data = await res.json();
-                
-                // Throw error if login failed
-                if (!data.success) throw new Error(data.error);
-                
-                // Save JWT in cookie
-                setCookie('holospace_jwt', data.jwt, 7);
-                
-                // Save user info in cookie
-                setCookie('holospace_user', encodeURIComponent(JSON.stringify(data.user)), 7);
-                
-                // Close modal
-                modal.classList.remove('active');
-                
-                // Update UI
-                updateUI(data.user);
-                
-                // Show success message
-                showNotification('Connexion réussie ! Bienvenue dans votre univers.', 'success');
-            
-            } catch (error) {
-                // Handle login error
-                console.error('Login error:', error);
-                showNotification('Erreur de connexion. Veuillez réessayer.', 'error');
-            }
-        }
-        
-        // Update UI after login
-        function updateUI(userData) {
-            // Update main title with user's name
-            document.getElementById('main-title').innerHTML = "Bienvenue, <span>" + userData.given_name + "</span>";
-            
-            // Get UI elements
-            const userImg = document.getElementById('user-photo');
-            const navText = document.getElementById('nav-text');
-            const navBtn = document.getElementById('nav-auth-btn');
-            
-            // If user has a profile picture
-            if (userData.picture) {
-                // Set image source
-                userImg.src = userData.picture;
-                
-                // Show image
-                userImg.style.display = "inline-block";
-                
-                // Hide text
-                navText.style.display = "none";
-                
-                // Disable modal opening
-                navBtn.classList.remove('open-modal');
-                
-                // Add logout confirmation behavior
-                navBtn.onclick = () => {
-                    showNotification('Cliquez à nouveau pour confirmer la déconnexion', 'warning', 3000);
-                    navBtn.onclick = () => logout();
-                };
-            }
-        }
-        
-        // Validate token with backend
-        async function validateToken(token) {
-            try {
-                const res = await fetch(`${API_URL}/user/profile`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                
-                // If token invalid
-                if (!res.ok) {
-                    showNotification('Votre session a expiré. Veuillez vous reconnecter.', 'warning');
-                    setTimeout(() => logout(), 2000);
+                if (data.success) {
+                    setCookie('holospace_jwt', data.jwt, 7);
+                    setCookie('holospace_user', encodeURIComponent(JSON.stringify(data.user)), 7);
+                    location.reload();
                 }
-            } catch (error) {
-                console.error('Validation error:', error);
-                showNotification('Problème de connexion au serveur.', 'error');
-            }
+            } catch (error) { showNotification('Erreur de connexion', 'error'); }
         }
-        
-        // Logout function
+
         function logout() {
-            // Remove cookies
             deleteCookie('holospace_jwt');
             deleteCookie('holospace_user');
-            
-            // Show message
-            showNotification('Vous êtes déconnecté. À bientôt !', 'info');
-            
-            // Reload page
-            setTimeout(() => {
-                location.reload();
-            }, 1500);
+            location.reload();
         }
-        
-        // Helper for authenticated requests
-        async function fetchWithAuth(url, options = {}) {
-            // Get token
-            const token = getCookie('holospace_jwt');
-            
-            // Throw error if not logged in
-            if (!token) throw new Error('Not authenticated');
-            
-            // Send request with Authorization header
-            return fetch(url, {
-                ...options,
-                headers: {
-                    ...options.headers,
-                    'Authorization': `Bearer ${token}`
-                }
-            });
+
+        function enterDemo() {
+            sessionStorage.setItem('holospace_demo', 'true');
+            window.location.href = 'universe.html';
         }
-</script>
+    </script>
 </body>
 </html>
