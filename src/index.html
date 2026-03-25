@@ -7,361 +7,250 @@
     <link rel="stylesheet" href="./css/style.css">
     <link rel="stylesheet" href="./css/login.css">
     
-    <!-- Google authentication script -->
     <script src="https://accounts.google.com/gsi/client?hl=fr" async defer></script>
-
-    <!-- Three.js library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-
-    <!-- Required for Google auth popup -->
     <meta http-equiv="Cross-Origin-Opener-Policy" content="same-origin-allow-popups">
+    <style>
+        .dropdown-menu.active { display: block !important; opacity: 1 !important; visibility: visible !important; }
+        #user-photo { width: 35px; height: 35px; border-radius: 50%; object-fit: cover; border: 2px solid #00d4ff; vertical-align: middle; }
+    </style>
 </head>
-
 <body>
-
-    <!-- Navigation bar -->
     <nav>
-
-        <!-- Logo -->
         <div class="logo">HoloSpace</div>
-
-        <!-- Navigation links -->
         <div class="links">
-
-            <!-- Section links -->
             <a href="#about">Découvrir</a>
             <a href="#features">Fonctionnalités</a>
-            
-            <!-- Auth button -->
             <a href="#" class="open-modal" id="nav-auth-btn">
-
-                <!-- Button text -->
                 <span id="nav-text">Commencer</span>
-
-                <!-- User profile image -->
                 <img id="user-photo" src="" alt="Profile" style="display: none;">
             </a>
-
-            <!-- Profile dropdown -->
             <div id="profile-dropdown" class="dropdown-menu">
-
-                <!-- Profile link -->
                 <a href="profile.html">✦ Voir mon profil</a>
                 <hr>
-
-                <!-- Logout button -->
                 <a href="#" onclick="openLogoutModal(event)" class="logout-link">✕ Déconnexion</a>
             </div>
         </div>
     </nav>
 
-    <!-- Hero section -->
     <section class="gal">
-
-        <!-- Text content -->
         <div class="content-wrapper">
-
-            <!-- Main title -->
             <h1 id="main-title">Transformez votre essence en <span>galaxie</span></h1>
-
-            <!-- Description -->
-            <p>
-                Créez un univers 3D basé sur votre personnalité.
-                Chaque planète raconte une partie de vous.
-            </p>
-
-            <!-- CTA button -->
+            <p>Créez un univers 3D basé sur votre personnalité. Chaque planète raconte une partie de vous.</p>
             <div class="actions">
-                <a href="#" class="open-modal">Créer mon univers</a>
+                <a href="#" class="open-modal" id="hero-create-btn">Créer mon univers</a>
             </div>
         </div>
-
-        <!-- 3D Earth container -->
         <div id="earth-container" class="planet"></div>
     </section>
 
-    <!-- About section -->
     <section id="about">
-
-        <!-- Section title -->
         <h2>Comment ça marche</h2>
-
-        <!-- Steps container -->
         <div class="steps">
-
-            <!-- Step 1 -->
             <div class="step-card">
                 <div class="step-number">1</div>
                 <h3>Connectez-vous</h3>
                 <p>Utilisez votre compte Google pour une analyse instantanée de votre essence.</p>
             </div>
-
-            <!-- Step 2 -->
             <div class="step-card">
                 <div class="step-number">2</div>
                 <h3>Explorez</h3>
                 <p>Votre univers prend vie sous vos yeux et devient totalement navigable en 3D.</p>
             </div>
-
-            <!-- Step 3 -->
             <div class="step-card highlight">
                 <div class="step-number">3</div>
                 <h3>Essayer</h3>
                 <p>Pas encore prêt ? Découvrez un univers généré aléatoirement dès maintenant.</p>
-
-                <!-- Demo button -->
                 <button onclick="enterDemo()" class="btn-try">Lancer la démo</button>
             </div>
         </div>
     </section>
 
-    <!-- Features section -->
     <section id="features">
-
-        <!-- Section title -->
         <h2>Votre univers en 3D</h2>
-
-        <!-- Features grid -->
         <div class="features">
-
-            <!-- Feature item -->
-            <div>
-                <h3>Planètes vivantes</h3>
-                <p>Chaque planète représente une facette de vous.</p>
-            </div>
-
-            <!-- Feature item -->
-            <div>
-                <h3>Nébuleuses colorées</h3>
-                <p>Les couleurs évoluent selon votre énergie.</p>
-            </div>
-
-            <!-- Feature item -->
-            <div>
-                <h3>Exploration libre</h3>
-                <p>Déplacez-vous librement dans votre galaxie.</p>
-            </div>
-
-            <!-- Feature item -->
-            <div>
-                <h3>Captures</h3>
-                <p>Sauvegardez votre univers quand vous voulez.</p>
-            </div>
+            <div><h3>Planètes vivantes</h3><p>Chaque planète représente une facette de vous.</p></div>
+            <div><h3>Nébuleuses colorées</h3><p>Les couleurs évoluent selon votre énergie.</p></div>
+            <div><h3>Exploration libre</h3><p>Déplacez-vous librement dans votre galaxie.</p></div>
+            <div><h3>Captures</h3><p>Sauvegardez votre univers quand vous voulez.</p></div>
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer style="text-align: center; padding: 40px; opacity: 0.6;">
+    <section class="act">
+        <h2>Prêt à commencer ?</h2>
+        <a href="#" class="open-modal" id="footer-start-btn">Lancer l'expérience</a>
+    </section>
+
+    <footer>
         <p>© 2026 HoloSpace</p>
     </footer>
 
-    <!-- Login modal -->
     <div id="login-modal" class="modal-overlay">
-
-        <!-- Modal content -->
         <div class="auth-box">
-
-            <!-- Close button -->
-            <span class="close-modal">&times;</span>
-
-            <!-- Title -->
+            <span class="close-modal" onclick="closeLoginModal()">&times;</span>
             <h1>HoloSpace</h1>
-
-            <!-- Subtitle -->
-            <p class="subtitle">Accédez à votre univers personnel</p>
-
-            <!-- Google button container -->
+            <p id="auth-status" class="subtitle">Accédez à votre univers personnel</p>
             <div id="google-btn-container"></div>
         </div>
     </div>
 
-    <!-- Logout confirmation modal -->
     <div id="logout-confirm-modal" class="modal-overlay">
-
         <div class="auth-box logout-box">
-
-            <!-- Title -->
             <h2>Quitter l'orbite ?</h2>
-
-            <!-- Message -->
-            <p>Voulez-vous vraiment vous déconnecter ?</p>
-
-            <!-- Actions -->
             <div class="logout-actions">
-
-                <!-- Confirm logout -->
                 <button onclick="logout()" class="btn-confirm-logout">Déconnexion</button>
-
-                <!-- Cancel -->
                 <button onclick="closeLogoutModal()" class="btn-cancel">Annuler</button>
             </div>
         </div>
     </div>
 
-    <!-- Notification container -->
-    <div id="notification-container" class="notification-container"></div>
-
     <script>
-
-        // Backend API URL
         const API_URL = 'http://localhost:3000';
-        
-        // Initialize 3D Earth
+        let googleButtonRendered = false;
+
+        // 1. EARTH ANIMATION
         function initLandingEarth() {
-
             const container = document.getElementById('earth-container');
-
+            if (!container) return;
             const scene = new THREE.Scene();
-
             const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 1000);
             camera.position.z = 35;
-
             const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
             renderer.setSize(300, 300);
             container.appendChild(renderer.domElement);
-
-            const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
-            scene.add(ambientLight);
-
-            const sunLight = new THREE.DirectionalLight(0xffffff, 1);
-            sunLight.position.set(5, 3, 5);
-            scene.add(sunLight);
+            
+            scene.add(new THREE.AmbientLight(0xffffff, 0.8));
+            const sun = new THREE.DirectionalLight(0xffffff, 1);
+            sun.position.set(5, 3, 5);
+            scene.add(sun);
 
             const loader = new THREE.TextureLoader();
-            
-            const earthGeo = new THREE.SphereGeometry(10, 64, 64);
-
-            const earthMat = new THREE.MeshStandardMaterial({
-                map: loader.load('https://threejs.org/examples/textures/planets/earth_atmos_2048.jpg'),
-                bumpMap: loader.load('https://threejs.org/examples/textures/planets/earth_normal_2048.jpg'),
-                bumpScale: 0.05,
-            });
-
-            const earth = new THREE.Mesh(earthGeo, earthMat);
+            const earth = new THREE.Mesh(
+                new THREE.SphereGeometry(10, 64, 64),
+                new THREE.MeshStandardMaterial({
+                    map: loader.load('https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/planets/earth_atmos_2048.jpg'),
+                })
+            );
             scene.add(earth);
-
-            const cloudGeo = new THREE.SphereGeometry(10.2, 64, 64);
-
-            const cloudMat = new THREE.MeshLambertMaterial({
-                map: loader.load('https://threejs.org/examples/textures/planets/earth_clouds_1024.png'),
-                transparent: true,
-                opacity: 0.4
-            });
-
-            const clouds = new THREE.Mesh(cloudGeo, cloudMat);
-            scene.add(clouds);
 
             function animate() {
                 requestAnimationFrame(animate);
                 earth.rotation.y += 0.002;
-                clouds.rotation.y += 0.003;
                 renderer.render(scene, camera);
             }
-
             animate();
         }
 
-        // Set cookie
+        // 2. COOKIE HELPERS
         function setCookie(name, value, days) {
-            let expires = "";
-
-            if (days) {
-                const date = new Date();
-                date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-                expires = "; expires=" + date.toUTCString();
-            }
-
-            document.cookie = name + "=" + (value || "") + expires + "; path=/; SameSite=Lax";
+            const date = new Date();
+            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+            document.cookie = `${name}=${value}; expires=${date.toUTCString()}; path=/; SameSite=Lax`;
         }
-        
-        // Get cookie
+
         function getCookie(name) {
-            const nameEQ = name + "=";
-            const ca = document.cookie.split(';');
-
-            for (let i = 0; i < ca.length; i++) {
-                let c = ca[i].trim();
-                if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
-            }
-
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
             return null;
         }
 
-        // On page load
-        window.onload = function () {
+        // 3. AUTH & UI
+        async function handleCredentialResponse(response) {
+            try {
+                const res = await fetch(`${API_URL}/auth/google`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ token: response.credential })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    setCookie('holospace_jwt', data.jwt, 7);
+                    setCookie('holospace_user', encodeURIComponent(JSON.stringify(data.user)), 7);
+                    window.location.href = 'universe.html'; // Direct redirect after login
+                }
+            } catch (err) { console.error("Auth failed", err); }
+        }
 
-            initLandingEarth();
-            
-            const savedUser = getCookie('holospace_user');
-
-            if (savedUser) {
-                updateUI(JSON.parse(decodeURIComponent(savedUser)));
-            }
-            
-            google.accounts.id.initialize({
-                client_id: "YOUR_CLIENT_ID",
-                callback: handleCredentialResponse
-            });
-
-            document.querySelectorAll('.open-modal').forEach(btn => {
-                btn.onclick = (e) => {
-
-                    e.preventDefault();
-
-                    if (!getCookie('holospace_jwt')) {
-                        document.getElementById('login-modal').classList.add('active');
-
-                        google.accounts.id.renderButton(
-                            document.getElementById("google-btn-container"),
-                            { theme: "outline", size: "large" }
-                        );
-
-                    } else if (btn.id === 'nav-auth-btn') {
-                        document.getElementById('profile-dropdown').classList.toggle('active');
-                        e.stopPropagation();
-                    }
-                };
-            });
-        };
-
-        // Update UI after login
-        function updateUI(userData) {
-            document.getElementById('main-title').innerHTML = "Bienvenue, <span>" + userData.given_name + "</span>";
-
+// 1. Modified updateUI (Removed the part that changed the demo button)
+function updateUI(userData) {
+            document.getElementById('main-title').innerHTML = `Bienvenue, <span>${userData.given_name}</span>`;
             const userImg = document.getElementById('user-photo');
             const navText = document.getElementById('nav-text');
-
             if (userData.picture) {
                 userImg.src = userData.picture;
                 userImg.style.display = "inline-block";
                 navText.style.display = "none";
             }
+            // We NO LONGER change the .btn-try (demo button) here.
+            // It stays as "Lancer la démo".
         }
 
-        // Open logout modal
-        function openLogoutModal(e) {
-            e.preventDefault();
-            document.getElementById('profile-dropdown').classList.remove('active');
-            document.getElementById('logout-confirm-modal').classList.add('active');
+        // 2. Fixed enterDemo
+        function enterDemo() {
+            // Even if the user is logged in, we set this flag.
+            // Your universe.html should check for 'holospace_demo' FIRST 
+            // before checking for the JWT cookie.
+            sessionStorage.setItem('holospace_demo', 'true');
+            window.location.href = 'universe.html';
         }
 
-        // Close logout modal
-        function closeLogoutModal() {
-            document.getElementById('logout-confirm-modal').classList.remove('active');
-        }
+        window.onload = function() {
+            initLandingEarth();
+            const userCookie = getCookie('holospace_user');
+            if (userCookie) updateUI(JSON.parse(decodeURIComponent(userCookie)));
 
-        // Logout user
+            google.accounts.id.initialize({
+                client_id: "537399217521-4v13efe1d9kal8hs5f0vpjp2gm9598e8.apps.googleusercontent.com",
+                callback: handleCredentialResponse
+            });
+
+// Locate the part of your script where you loop through .open-modal buttons
+document.querySelectorAll('.open-modal').forEach(btn => {
+    btn.onclick = (e) => {
+        e.preventDefault();
+        
+        const jwt = getCookie('holospace_jwt');
+
+        if (!jwt) {
+            // User not logged in -> Show Google Login
+            openLoginModal();
+        } else {
+            // USER IS LOGGED IN
+            if (btn.id === 'nav-auth-btn') {
+                // Just toggle the profile menu
+                document.getElementById('profile-dropdown').classList.toggle('active');
+            } else {
+                // THEY CLICKED "CRÉER MON UNIVERS" OR "LANCER L'EXPÉRIENCE"
+                // 1. CRITICAL: Clear the demo flag so universe.html knows to load REAL data
+                sessionStorage.removeItem('holospace_demo');
+                
+                // 2. Redirect to the universe
+                window.location.href = 'universe.html';
+            }
+        }
+    };
+});
+        };
+
+        function closeLoginModal() { document.getElementById('login-modal').classList.remove('active'); }
+        function openLogoutModal(e) { e.preventDefault(); document.getElementById('logout-confirm-modal').classList.add('active'); }
+        function closeLogoutModal() { document.getElementById('logout-confirm-modal').classList.remove('active'); }
         function logout() {
-            document.cookie = 'holospace_jwt=; Max-Age=-99999999; path=/;';
-            document.cookie = 'holospace_user=; Max-Age=-99999999; path=/;';
-            location.reload();
+            document.cookie = "holospace_jwt=; Max-Age=0; path=/;";
+            document.cookie = "holospace_user=; Max-Age=0; path=/;";
+            window.location.reload();
         }
-
-        // Enter demo mode
         function enterDemo() {
             sessionStorage.setItem('holospace_demo', 'true');
             window.location.href = 'universe.html';
         }
+
+        window.onclick = (e) => {
+            if (!e.target.closest('#nav-auth-btn') && !e.target.closest('.dropdown-menu')) {
+                document.getElementById('profile-dropdown').classList.remove('active');
+            }
+        };
     </script>
 </body>
 </html>
