@@ -20,10 +20,6 @@ HoloSpace is an immersive web application that transforms personal data into an 
 
 ### Configuration
 
-#### MySQL database
-
-//TODO
-
 ```bash
 # Create the database
 mysql -u root -p < database/schema.sql
