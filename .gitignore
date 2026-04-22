@@ -368,3 +368,6 @@ nbactions.xml
 ### Sass ###
 .sass-cache/
 *.css.map
+
+## remove ds store
+.DS_Store
