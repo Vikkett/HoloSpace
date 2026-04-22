@@ -2,7 +2,7 @@
 
 ## Description
 
-HoloSpace is an immersive web application that transforms personal data into an interactive 3D galaxy. The application utilizes AI (Groq API) to analyze user responses and automatically generate a unique visual universe composed of planets and stars.
+HoloSpace is an immersive web application that transforms personal data into an interactive 3D galaxy. The application utilizes AI (Gemini API) to analyze user responses and automatically generate a unique visual universe composed of planets and stars.
 
 ## Getting Started
 
@@ -20,23 +20,19 @@ HoloSpace is an immersive web application that transforms personal data into an 
 
 ### Configuration
 
-```bash
-# Create the database
-mysql -u root -p < database/schema.sql
-```
-
 ### Deployment
 
 #### 1. Installation of dependencies
 #### Dev environment
-```bash
-# Clone the repository
-cd holospace
 
+Clone the repository
+[GitHub Vikket](https://github.com/Vikkett/HoloSpace) 
+
+```bash
 # Install packages
 npm install
 
-# Development Mode
+# Development Mode (Frontend)
 npm run dev
 
 # Backend Mode 
@@ -58,29 +54,31 @@ npm run build
 holospace/
 ├── .github/
 │   └── workflows/
-│       └── ci.yml              # GitHub Actions CI/CD - auto-tests on every push         
+│       └── ci.yml                      
 │  
 ├── server
-│   └── server.mjs              # backend file
-├── src/
-│   ├──html                     
-│   │  └──index.html            # Home / Landing page
-│   │
-│   └── css/
-│       ├── style.css           # Main page styles
-│       └── login.css           # Login window styles
+│   └── server.mjs            
+├── src/                               
+│   ├── css/
+│   │   ├── style.css         
+│   │   └── login.css         
+│   ├── index.html
+│   ├── universe.html
+│   └── ai-universe.html
 │
 ├── tests
-│   └── basic.test.js           # Test scripts
-├── .gitignore                  # Git exclusions (node_modules, .env, dist)
-├── package.json                # npm dependencies and scripts
-└── README.md                   # This file
+│   └── basic.test.js           
+├── .gitignore
+├── package-lock.json               
+├── package.json             
+├── README.md
+└── vite.config.js                 
 ```
 ## Collaboration
 
 #### Proposing a new feature
  
- 1. Issue: Open an issue on GitHub describing the feature.
+1. Issue: Open an issue on [GitHub](https://github.com/Vikkett/HoloSpace/issues) describing the feature.
 2. Discussion: Wait for validation or feedback.
 3. Pull Request: Create a branch feature/feature-name and submit.
 
@@ -94,8 +92,6 @@ main        # Stable code, deployable
 # Development Branch
 develop     # Feature integration
 
-# Working Branches
-feature/prototype # Prototype development
 ```
 
 ## License
