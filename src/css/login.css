@@ -1,0 +1,246 @@
+/* ==========================================
+   MODAL OVERLAY (Background)
+   ========================================== */
+   .modal-overlay {
+    display: none; 
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(12px);
+    z-index: 9999;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.3s ease;
+}
+
+.modal-overlay.active {
+    display: flex;
+}
+
+/* ==========================================
+   AUTH & LOGOUT BOXES (The Windows)
+   ========================================== */
+.auth-box {
+    background: rgba(10, 10, 18, 0.9);
+    padding: 50px 40px;
+    border-radius: 30px; /* Softer, stylish corners */
+    border: 1px solid rgba(0, 212, 255, 0.3);
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+    position: relative;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 30px rgba(0, 212, 255, 0.1);
+    backdrop-filter: blur(20px);
+}
+
+/* Specific Style for Logout Window (Neon Red Soft) */
+.logout-box {
+    border: 1px solid rgba(255, 50, 100, 0.4) !important;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), 0 0 30px rgba(255, 50, 100, 0.15) !important;
+}
+
+.auth-box h1, .auth-box h2 {
+    color: #fff;
+    margin-bottom: 10px;
+    font-size: 2rem;
+    font-weight: 300;
+    letter-spacing: 1px;
+}
+
+.logout-box h2 {
+    color: #ff3264;
+}
+
+.subtitle {
+    color: rgba(255, 255, 255, 0.6);
+    margin-bottom: 30px;
+    font-size: 0.9rem;
+}
+
+/* ==========================================
+   BUTTONS (Stadium Form)
+   ========================================== */
+.logout-actions {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 30px;
+}
+
+.btn-confirm-logout {
+    background: #ff3264;
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 50px; /* Stadium form */
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 15px rgba(255, 50, 100, 0.3);
+}
+
+.btn-confirm-logout:hover {
+    background: #ff5080;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(255, 50, 100, 0.5);
+}
+
+.btn-cancel {
+    background: transparent;
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 12px 30px;
+    border-radius: 50px; /* Stadium form */
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-cancel:hover {
+    border-color: #00d4ff;
+    color: #00d4ff;
+    background: rgba(0, 212, 255, 0.05);
+    transform: translateY(-3px);
+}
+
+.close-modal {
+    position: absolute;
+    top: 20px;
+    right: 25px;
+    font-size: 24px;
+    color: #00d4ff;
+    cursor: pointer;
+    transition: transform 0.2s;
+    opacity: 0.7;
+}
+
+.close-modal:hover {
+    transform: scale(1.2);
+    opacity: 1;
+}
+
+/* ==========================================
+   NAVBAR & PROFILE IMAGE FIX
+   ========================================== */
+.links {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+#user-photo {
+    width: 40px !important;
+    height: 40px !important;
+    border-radius: 50% !important; /* Perfect Circle */
+    object-fit: cover !important;
+    border: 2px solid #00d4ff;
+    box-shadow: 0 0 15px rgba(0, 212, 255, 0.3);
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+#user-photo:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 20px rgba(0, 212, 255, 0.6);
+}
+
+/* ==========================================
+   USER MENU DROPDOWN
+   ========================================== */
+.dropdown-menu {
+    position: absolute;
+    top: 110%; /* Under nav */
+    right: 0;
+    background: rgba(10, 10, 20, 0.95);
+    border: 1px solid rgba(0, 212, 255, 0.3);
+    border-radius: 15px;
+    min-width: 200px;
+    display: none;
+    z-index: 1000;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(15px);
+    overflow: hidden;
+    padding: 10px 0;
+}
+
+.dropdown-menu.active {
+    display: block;
+    animation: navFadeIn 0.3s ease;
+}
+
+.dropdown-menu a {
+    display: block !important;
+    padding: 12px 20px !important;
+    color: white !important;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+    background: transparent !important;
+    border: none !important;
+}
+
+.dropdown-menu a:hover {
+    background: rgba(0, 212, 255, 0.1) !important;
+    color: #00d4ff !important;
+    padding-left: 25px !important;
+}
+
+.dropdown-menu hr {
+    border: 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    margin: 5px 0;
+}
+
+.logout-link {
+    color: #ff3264 !important;
+}
+
+/* ==========================================
+   NOTIFICATIONS
+   ========================================== */
+.notification-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 10000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.notification {
+    min-width: 280px;
+    padding: 15px 20px;
+    border-radius: 15px;
+    background: rgba(15, 15, 25, 0.8);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    animation: slideIn 0.4s ease forwards;
+}
+
+/* Animations */
+@keyframes navFadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideIn {
+    from { transform: translateX(120%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slideOut {
+    to { transform: translateX(120%); opacity: 0; }
+}
+
+.notification.hiding {
+    animation: slideOut 0.3s ease forwards;
+}

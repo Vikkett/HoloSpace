@@ -1,0 +1,37 @@
+{
+  "name": "holospace",
+  "version": "1.0.0",
+  "description": "Represantation visuel",
+  "homepage": "https://github.com/Vikkett/HoloSpace#readme",
+  "bugs": {
+    "url": "https://github.com/Vikkett/HoloSpace/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Vikkett/HoloSpace.git"
+  },
+  "license": "MIT",
+  "author": "Viktoriia Varennyk",
+  "type": "commonjs",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs",
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "jest",
+    "dev": "vite",
+    "start": "node server.mjs"
+  },
+  "devDependencies": {
+    "jest": "^30.2.0",
+    "vite": "^7.3.1"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.24.1",
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "google-auth-library": "^10.6.1",
+    "jsonwebtoken": "^9.0.3"
+  }
+}
