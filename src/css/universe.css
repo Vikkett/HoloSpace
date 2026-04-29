@@ -1,22 +1,26 @@
 
-/* Remove margins, set black background, white text, hide scrollbars, set font */
-body { margin: 0; background: #000000; color: white; overflow: hidden; font-family: 'Segoe UI', sans-serif; }
-
-/* UI container fixed in top-left corner */
-.ui { position: fixed; top: 20px; left: 20px; z-index: 100; pointer-events: none; }
-
-/* Styling for mode label display */
-.mode-label { 
-    background: rgba(0, 212, 255, 0.1); 
-    border: 1px solid #00d4ff; 
-    padding: 8px 20px; 
-    border-radius: 30px; 
-    font-size: 0.75rem; 
-    text-transform: uppercase; 
-    letter-spacing: 2px;
-    box-shadow: 0 0 15px rgba(0, 212, 255, 0.3);
-    backdrop-filter: blur(5px);
+body { margin: 0; overflow: hidden; background: #000; font-family: 'Courier New', monospace; }
+.demo-ui { 
+    position: absolute; 
+    top: 20px; 
+    left: 20px; 
+    color: #00d4ff; 
+    z-index: 100;
+    background: rgba(0,0,0,0.7);
+    padding: 20px;
+    border: 1px solid #00d4ff;
+    border-radius: 10px;
 }
-
-/* Ensure canvas fills screen */
-canvas { display: block; }
+.demo-ui h2 { margin: 0 0 10px 0; text-shadow: 0 0 10px #00d4ff; }
+.btn-back { 
+    padding: 10px 20px; 
+    background: transparent; 
+    border: 1px solid #00d4ff;
+    color: #00d4ff;
+    border-radius: 20px; 
+    cursor: pointer;
+}
+.btn-back:hover {
+    background: #00d4ff;
+    color: #000;
+}
