@@ -7,11 +7,12 @@ import Groq from 'groq-sdk';
 const app = express();
 const PORT = 3000;
 
-const GOOGLE_CLIENT_ID = '537399217521-4v13efe1d9kal8hs5f0vpjp2gm9598e8.apps.googleusercontent.com';
 const client = new OAuth2Client(GOOGLE_CLIENT_ID);
-const JWT_SECRET = '63cd6f9a7fe5717984f7d541d6561ba6af92c9b58ec436f929a4879f70ee5903';
 
-const groq = new Groq({ apiKey: "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" });
+
+const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
+const JWT_SECRET = process.env.JWT_SECRET;
+const GROQ_API_KEY = process.env.GROQ_API_KEY;
 
 app.use(cors({
     origin: ['http://localhost:5173'],
