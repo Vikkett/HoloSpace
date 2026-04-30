@@ -371,3 +371,5 @@ nbactions.xml
 
 ## remove ds store
 .DS_Store
+
+.env

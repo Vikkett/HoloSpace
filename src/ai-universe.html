@@ -8,36 +8,98 @@
 </head>
 <body>
 
+    <audio id="bg-music" loop></audio>
+
+    <!-- Modal overlay -->
+    <div id="setup-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h2>Configure ton Univers</h2>
+            
+            <form id="setup-form" onsubmit="event.preventDefault(); validateAndGo();">
+                
+                <!-- Free text: mood/vibe -->
+                <div class="form-group">
+                    <label for="setup-vibe">Décris ton mood / vibe</label>
+                    <input 
+                        type="text" 
+                        id="setup-vibe" 
+                        placeholder="ex: sombre cyberpunk, doux et onirique, chaos absolu..." 
+                        required
+                    >
+                    <span id="vibe-error" class="error-msg"></span>
+                </div>
+
+                <!-- Style selector -->
+                <div class="form-group">
+                    <label for="setup-style">Style visuel</label>
+                    <select id="setup-style" required>
+                        <option value="" disabled selected>Choisis un style</option>
+                        <option value="realistic">Réaliste</option>
+                        <option value="low-poly">Low-Poly</option>
+                        <option value="neon">Néon</option>
+                        <option value="abstract">Abstrait</option>
+                    </select>
+                </div>
+
+                <!-- Music toggle -->
+                <div class="form-group toggle-group">
+                    <label for="setup-music-toggle">Ambiance sonore</label>
+                    <label class="switch">
+                        <input type="checkbox" id="setup-music-toggle" checked>
+                        <span class="slider"></span>
+                    </label>
+                    <span id="music-label">Activée</span>
+                </div>
+
+                <!-- Hidden: music type (only used if toggle is on) -->
+                <div class="form-group" id="music-type-group">
+                    <label for="setup-music-type">Type de musique</label>
+                    <select id="setup-music-type">
+                        <option value="ambient">Ambient</option>
+                        <option value="space">Space</option>
+                        <option value="dark">Dark</option>
+                    </select>
+                </div>
+
+                <button type="submit">ENTRER DANS L'UNIVERS</button>
+            </form>
+        </div>
+    </div>
+
     <div class="ai-interface">
         <div class="header">
             <div class="status-box">
                 <div id="mode-indicator">✦ AI UNIVERSE</div>
-                <div class="system-time">NEURAL_LINK: ESTABLISHED // GEMINI_V1.5</div>
+                <div class="system-time">NEURAL_LINK: ESTABLISHED // Groq</div>
             </div>
             <button class="btn-exit" onclick="window.location.href='index.html'">RETOUR</button>
         </div>
     </div>
 
-    <div class="chat-trigger" onclick="toggleChat()">⚡</div>
+    <div class="chat-trigger" onclick="toggleChat()" style="display:none;">⚡</div>
 
-    <div class="chat-container" id="chat-window">
+    <div class="chat-container" id="chat-window" style="display:none;">
         <div class="chat-header">
             <span>Matrice de Création</span>
-            <span style="cursor:pointer; font-size: 1.2rem;" onclick="toggleChat()">×</span>
+            <span onclick="toggleChat()" style="cursor:pointer;">×</span>
         </div>
+    
         <div id="chat-history">
             <div class="ai-msg">
-                ✦ Liaison établie. Je suis prêt à traduire votre essence en cosmos. <br><br>
+                ✦ Liaison établie. Je suis prêt à traduire votre essence en cosmos.
             </div>
         </div>
+    
         <div class="input-area">
-            <input type="text" id="user-input" placeholder="Décrivez votre vibe..." onkeypress="if(event.key==='Enter') askAI()">
-            <button id="send-btn" onclick="askAI()">CRÉER</button>
+            <input type="text" id="user-input" placeholder="Décrivez votre vibe..." 
+                   onkeypress="if(event.key==='Enter') handleUserMsg()">
+            <button id="send-btn" onclick="handleUserMsg()">CRÉER</button>
         </div>
     </div>
-
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
-
-</body>
+    <script src="./js/ai-universe.js"></script>
+    
+    </body>
 </html>
