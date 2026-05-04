@@ -1,3 +1,22 @@
+// exposes all functions to Jest + jsdom window
+
+Object.assign(window, {
+    init,
+    toggleChat,
+    addMsg,
+    inferVibe,
+    inferEnergy,
+    fillMissing,
+    buildUniverse,
+    updateEnvironment,
+    changeSky,
+    animate,
+    talkToBot,
+    validateAndGo,
+    handleUserMsg
+});
+
+
 // this whole thing is held together with duct tape and hope
 let scene, camera, renderer, stars, controls, centralSun;
 let planets = [];
@@ -352,7 +371,6 @@ Ces paramètres viennent du formulaire de personnalisation. Crée l'univers IMM�
     await talkToBot(finalMessage);
 }
 
-// ===== GENERATE BUTTON =====
 function triggerGeneration() {
     const input = document.getElementById('user-input');
     input.value = "crée mon univers";
@@ -739,3 +757,5 @@ window.onresize = () => {
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
 };
+
+
