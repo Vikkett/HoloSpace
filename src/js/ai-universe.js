@@ -16,7 +16,6 @@ Object.assign(window, {
     handleUserMsg
 });
 
-
 // this whole thing is held together with duct tape and hope
 let scene, camera, renderer, stars, controls, centralSun;
 let planets = [];
@@ -39,8 +38,7 @@ function toggleChat() {
 // fire up the three.js scene
 function init() {
     scene = new THREE.Scene();
-    
-    // fog init starts subtle
+    scene.background = new THREE.Color(0x020208); // dark blue-black, not pure black
     scene.fog = new THREE.FogExp2(0x000000, 0.0008);
     
     camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 4000);
@@ -266,7 +264,7 @@ function updateEnvironment(params) {
     ambientColor.lerp(new THREE.Color(0xffffff), 0.7);
     ambientLight.color.copy(ambientColor);
 
-    if (stars && !manualSkyOverride) {
+    if (stars) {
         const starColor = new THREE.Color(pColor);
         starColor.lerp(new THREE.Color(0xffffff), 0.5);
         stars.material.color.copy(starColor);
@@ -298,37 +296,33 @@ function updateEnvironment(params) {
     sunLight.intensity = energy === 'high' ? 3.0 : energy === 'low' ? 1.5 : 2.5;
     sunLight.color.setHex(pColor);
     
-    console.log('Environment updated:', { vibe, energy, manualSkyOverride });
+    console.log('Environment updated:', { vibe, energy });
 }
 
-// ===== LOADING STATE =====
+// animation while Ai responds
 function setLoading(loading) {
     isLoading = loading;
-    const btn = document.getElementById('send-btn');
+    // Target the chat send button specifically
+    const btn = document.querySelector('#chat-window #send-btn');
     const input = document.getElementById('user-input');
     
     if (loading) {
-        btn.innerText = '...';
-        btn.disabled = true;
-        input.disabled = true;
+        if (btn) { btn.innerText = '...'; btn.disabled = true; }
+        if (input) { input.disabled = true; }
         
-        // speed up stars
-        stars.userData = { originalSpeed: stars.rotation.y };
-        stars.rotation.y = 0.002;
-        
-        // speed up planets
+        if (stars) {
+            stars.userData = { originalSpeed: stars.rotation.y };
+            stars.rotation.y = 0.002;
+        }
         planets.forEach(p => {
             p.userData = { ...p.userData, originalSpeed: p.speed };
             p.speed *= 3;
         });
-        
     } else {
-        btn.innerText = 'CRÉER';
-        btn.disabled = false;
-        input.disabled = false;
+        if (btn) { btn.innerText = 'CRÉER'; btn.disabled = false; }
+        if (input) { input.disabled = false; }
         
-        // restore speeds
-        if (stars.userData?.originalSpeed !== undefined) {
+        if (stars?.userData?.originalSpeed !== undefined) {
             stars.rotation.y = stars.userData.originalSpeed;
         }
         planets.forEach(p => {
@@ -354,30 +348,10 @@ async function handleUserMsg() {
 
     let finalMessage = text;
 
-    // if we have setup data and haven't used it yet, append it AND force creation
-    if (universeSetup && !universeSetup.used) {
-        finalMessage += `
-
-PARAMÈTRES UTILISATEUR:
-- vibe: ${universeSetup.vibe}
-- style: ${universeSetup.style}
-- musique: ${universeSetup.musicEnabled ? universeSetup.musicType : 'aucune'}
-
-Ces paramètres viennent du formulaire de personnalisation. Crée l'univers IMMÉDIATEMENT avec ces paramètres. Ne pose pas de questions.`;
-
-        universeSetup.used = true;
-    }
-
     await talkToBot(finalMessage);
 }
 
-function triggerGeneration() {
-    const input = document.getElementById('user-input');
-    input.value = "crée mon univers";
-    handleUserMsg();
-}
-
-// talk to the backend — FULL JSON WIRING
+// talk to the backend 
 async function talkToBot(userMessage) {
     setLoading(true);
     
@@ -401,85 +375,46 @@ async function talkToBot(userMessage) {
         
         addMsg(cleanMessage, 'ai');
 
-        // === USE SERVER ENVIRONMENT DATA (PRIORITY) ===
-        if (data.environment) {
-            const env = data.environment;
-            
-            if (env.skyColor) {
-                setSkyColor(env.skyColor);
-            }
-            
-            const fogMap = { low: 0.0001, medium: 0.0003, high: 0.0006 };
-            if (env.fogDensity && fogMap[env.fogDensity]) {
-                scene.fog.density = fogMap[env.fogDensity];
-            }
-            
-            if (env.ambientIntensity !== undefined) {
-                ambientLight.intensity = env.ambientIntensity;
-            }
-            
-            if (nebulaMesh) {
-                nebulaMesh.visible = !!env.nebula;
-            }
-        }
+// Handle planets
+if (data.planets && data.planets.length > 0) {
+    console.log('Received', data.planets.length, 'planets:', data.planets);
+    buildUniverse(data.planets);
+}
 
-        // === USE SERVER AUDIO DATA (PRIORITY) ===
-        if (data.audio && data.audio.track) {
-            startMusic(data.audio.track);
-            if (data.audio.volume !== undefined) {
-                const audio = document.getElementById('bg-music');
-                audio.volume = data.audio.volume;
-            }
-        }
+// Handle environment — ONE block only
+if (data.environment) {
+    const env = data.environment;
 
-        // === FALLBACK: COLOR DETECTION FROM TEXT ===
-        const colorMatch = cleanMessage.match(/#([0-9A-Fa-f]{6})/);
-        if (colorMatch && !data.environment?.skyColor) {
-            setSkyColor('#' + colorMatch[1]);
-        }
+    // Update sun color
+    if (env.sunColor && centralSun) {
+        centralSun.material.color.setHex(env.sunColor);
+        sunLight.color.setHex(env.sunColor);
+    }
 
-        if (cleanMessage.toLowerCase().includes('ciel') && cleanMessage.toLowerCase().includes('rouge')) {
-            setSkyColor('#FF3737');
-        }
-
-        // === PLANETS ===
-        if (data.isComplete && data.planets && data.planets.length > 0) {
-            console.log('Received', data.planets.length, 'planets:', data.planets);
-            
-            if (data.planets.length !== 5) {
-                console.warn('Expected 5 planets, got', data.planets.length);
-                addMsg(`⚠️ Nova a généré ${data.planets.length} planètes au lieu de 5. Je complète avec des planètes aléatoires...`, 'ai');
-                data.planets = fillMissing(data.planets);
-            }
-            
-            buildUniverse(data.planets);
-
-            // fallback environment from planets if server didn't send explicit env
-            if (universeSetup && !data.environment) {
-                const envParams = {
-                    vibe: inferVibe(universeSetup.vibe, data.planets[0]?.color),
-                    mood: universeSetup.style,
-                    primaryColor: data.planets[0]?.color || 0x00d4ff,
-                    secondaryColor: data.planets[2]?.color || 0x4a0080,
-                    energy: inferEnergy(universeSetup.vibe)
-                };
-                updateEnvironment(envParams);
-            }
-            
-            // fallback audio from user setup if server didn't send audio
-            if (universeSetup && !data.audio && universeSetup.musicEnabled) {
-                startMusic(universeSetup.musicType);
-            }
-
-            if (currentPhase === 'create') {
-                document.getElementById('mode-indicator').innerText = "✦ SYSTÈME DÉPLOYÉ";
-                document.getElementById('user-input').placeholder = "Demande des modifications...";
-                addMsg("✨ Votre univers est né ! Demandez-moi de changer des couleurs, ajouter des planètes, ou modifier l'ambiance.", 'ai');
-            } else if (currentPhase === 'modify') {
-                document.getElementById('mode-indicator').innerText = "✦ UNIVERS MODIFIÉ";
-            }
+    // Update sky/nebula/fog/stars
+    updateEnvironment({
+        vibe: env.vibe || 'neutral',  
+        mood: env.vibe || 'neutral',
+        primaryColor: env.primaryColor || 0x00d4ff,
+        secondaryColor: env.secondaryColor || env.primaryColor || 0x4a0080,
+        energy: env.intensity === 'high' ? 'high'
+              : env.intensity === 'low'  ? 'low'
+              : 'medium'
+    });
+}
+        // Update UI based on state
+        if (data.isComplete) {
+            document.getElementById('mode-indicator').innerText = "✦ SYSTÈME DÉPLOYÉ";
+            document.getElementById('user-input').placeholder = "Demande des modifications...";
+        } else if (data.planets && data.planets.length> 0) {
+            document.getElementById('mode-indicator').innerText = `✦ ${data.planets.length} PLANÈTE(S)`;
         } else {
             document.getElementById('mode-indicator').innerText = "✦ AI UNIVERSE";
+        }
+
+        // Show tool usage info if any
+        if (data.toolsUsed && data.toolsUsed.length > 0) {
+            console.log('Tools used:', data.toolsUsed);
         }
         
     } catch (e) {
@@ -536,9 +471,13 @@ function addMsg(text, sender) {
 }
 
 // rebuild the whole solar system from ai data
+// rebuild the whole solar system from ai data
+// UPDATED: Handles both old format (size, dist, speed, hasRings, hasClouds as strings)
+// and new format (name, color as hex NUMBER, colorName, atmosphere, element, shape, theme, description, size, dist, speed, hasRings, hasClouds)
 function buildUniverse(aiData) {
     console.log('Updating universe with', aiData.length, 'planets');
-    
+
+    // Clear existing planets and orbits
     planets.forEach(p => scene.remove(p.group));
     orbits.forEach(o => scene.remove(o));
     planets = [];
@@ -549,26 +488,83 @@ function buildUniverse(aiData) {
         return;
     }
 
+    // Update sun color based on first planet
     try {
-        const sunColor = parseInt(aiData[0].color, 16);
+        const firstPlanet = aiData[0];
+        let sunColor;
+
+        if (typeof firstPlanet.color === 'number') {
+            // New format: color is already a hex number
+            sunColor = firstPlanet.color;
+        } else if (typeof firstPlanet.color === 'string' && firstPlanet.color.startsWith('0x')) {
+            // Old format hex string
+            sunColor = parseInt(firstPlanet.color, 16);
+        } else if (typeof firstPlanet.color === 'string') {
+            // Try CSS color name (three.js supports named colors)
+            const tempColor = new THREE.Color(firstPlanet.color);
+            sunColor = tempColor.getHex();
+        } else {
+            sunColor = 0xffffff;
+        }
+
         if (!isNaN(sunColor)) centralSun.material.color.setHex(sunColor);
-    } catch (e) {}
+    } catch (e) {
+        console.log('Could not set sun color:', e);
+    }
 
     aiData.forEach((p, index) => {
         try {
             const group = new THREE.Group();
-            const size = parseFloat(p.size) || 8;
-            const dist = parseFloat(p.dist) || 100;
-            const speed = parseFloat(p.speed) || 0.005;
-            const colorNum = parseInt(p.color, 16) || 0x4F86F7;
-            
+
+            // Handle both old and new format
+            let size, dist, speed, colorNum, hasRings, hasClouds;
+
+            if (typeof p.color === 'number') {
+                // NEW FORMAT from server
+                size = p.size || (5 + Math.random() * 8);
+                dist = p.dist || (80 + (index * 50));
+                speed = p.speed || (0.003 + Math.random() * 0.005);
+                colorNum = p.color;
+                hasRings = p.hasRings || false;
+                hasClouds = p.hasClouds !== false; // default true
+            } else {
+                // OLD FORMAT (backward compatibility)
+                size = parseFloat(p.size) || 8;
+                dist = parseFloat(p.dist) || 100;
+                speed = parseFloat(p.speed) || 0.005;
+
+                // Handle color - could be hex string or CSS name
+                if (typeof p.color === 'string' && p.color.startsWith('0x')) {
+                    colorNum = parseInt(p.color, 16);
+                } else if (typeof p.color === 'string') {
+                    // Try as CSS color name
+                    try {
+                        const tempC = new THREE.Color(p.color);
+                        colorNum = tempC.getHex();
+                    } catch {
+                        colorNum = 0x4F86F7;
+                    }
+                } else {
+                    colorNum = 0x4F86F7;
+                }
+
+                hasRings = p.hasRings || false;
+                hasClouds = p.hasClouds || false;
+            }
+
+            // Create planet mesh
             const mesh = new THREE.Mesh(
                 new THREE.SphereGeometry(size, 32, 32),
-                new THREE.MeshStandardMaterial({ color: colorNum, metalness: 0.3, roughness: 0.7 })
+                new THREE.MeshStandardMaterial({ 
+                    color: colorNum, 
+                    metalness: 0.3, 
+                    roughness: 0.7 
+                })
             );
             group.add(mesh);
 
-            if (p.hasClouds) {
+            // Add clouds if enabled
+            if (hasClouds) {
                 const cloudGeo = new THREE.SphereGeometry(size + 0.6, 32, 32);
                 const cloudMat = new THREE.MeshLambertMaterial({
                     color: 0xffffff,
@@ -578,7 +574,8 @@ function buildUniverse(aiData) {
                 group.add(new THREE.Mesh(cloudGeo, cloudMat));
             }
 
-            if (p.hasRings) {
+            // Add rings if enabled
+            if (hasRings) {
                 const ring = new THREE.Mesh(
                     new THREE.RingGeometry(size * 1.6, size * 2.5, 64),
                     new THREE.MeshStandardMaterial({
@@ -592,6 +589,7 @@ function buildUniverse(aiData) {
                 group.add(ring);
             }
 
+            // Create orbit ring
             const orbitGeo = new THREE.RingGeometry(dist - 0.5, dist + 0.5, 128);
             const orbitMat = new THREE.MeshBasicMaterial({
                 color: colorNum,
@@ -604,14 +602,16 @@ function buildUniverse(aiData) {
             scene.add(orbit);
             orbits.push(orbit);
 
+            // Add planet to tracking array
             planets.push({
                 group,
                 distance: dist,
                 speed: speed,
-                angle: (index / aiData.length) * Math.PI * 2
+                angle: (index / aiData.length) * Math.PI * 2,
+                name: p.name || `Planete ${index + 1}`
             });
             scene.add(group);
-            
+
         } catch (e) {
             console.error('Planet error:', e);
         }
@@ -668,31 +668,12 @@ function changeSky(typeOrHex) {
     }));
 
     scene.add(stars);
-    
-    manualSkyOverride = true;
     console.log('Sky changed to:', color.getHexString());
 }
 
 // quick direct setter
 function setSkyColor(hexString) {
     changeSky(hexString);
-}
-
-// play background music
-function startMusic(type) {
-    const audio = document.getElementById('bg-music');
-
-    const tracks = {
-        ambient: "./music/ambient.mp3",
-        space: "./music/space.mp3",
-        dark: "./music/dark.mp3"
-    };
-
-    if (tracks[type]) {
-        audio.src = tracks[type];
-        audio.volume = 0.4;
-        audio.play();
-    }
 }
 
 function validateAndGo() {
@@ -709,38 +690,14 @@ function validateAndGo() {
     errorSpan.textContent = "";
     vibeInput.classList.remove('invalid');
 
-    universeSetup = {
-        vibe: vibe,
-        style: document.getElementById('setup-style').value,
-        musicEnabled: document.getElementById('setup-music-toggle').checked,
-        musicType: document.getElementById('setup-music-type').value,
-        used: false
-    };
-
     document.getElementById('setup-modal').style.display = 'none';
 
     document.getElementById('chat-window').style.display = 'flex';
     document.querySelector('.chat-trigger').style.display = 'flex';
-
-    if (universeSetup.musicEnabled) {
-        startMusic(universeSetup.musicType);
-    }
-
+    init();
     startConvo();
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    const toggle = document.getElementById('setup-music-toggle');
-    const label = document.getElementById('music-label');
-    const typeGroup = document.getElementById('music-type-group');
-
-    if (toggle) {
-        toggle.addEventListener('change', () => {
-            label.textContent = toggle.checked ? "Activée" : "Désactivée";
-            typeGroup.style.display = toggle.checked ? 'block' : 'none';
-        });
-    }
-});
 
 function letsGo() {
     validateAndGo();
@@ -751,11 +708,42 @@ function oldGenerateThing() {
     triggerGeneration();
 }
 
-window.onload = init;
+
+window.onload = () => {
+    console.log("UI LOADED");
+
+    const input = document.getElementById('user-input');
+    const btn = document.getElementById('send-btn');
+    const enterBtn = document.getElementById('enter-btn');
+
+
+    if (input) {
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') handleUserMsg();
+        });
+    }
+
+    if (btn) {
+        btn.addEventListener('click', handleUserMsg);
+    }
+
+    if (enterBtn) {
+        enterBtn.addEventListener('click', validateAndGo);
+    }
+
+    const vibeInput = document.getElementById('setup-vibe');
+    if (vibeInput) {
+        vibeInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') validateAndGo();
+        });
+    }
+};
+
+// keep resize outside
 window.onresize = () => {
+    if (!camera || !renderer) return;
+
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
 };
-
-

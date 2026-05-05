@@ -8,8 +8,6 @@
 </head>
 <body>
 
-    <audio id="bg-music" loop></audio>
-
     <!-- Modal overlay -->
     <div id="setup-modal" class="modal-overlay">
         <div class="modal-content">
@@ -38,26 +36,6 @@
                         <option value="low-poly">Low-Poly</option>
                         <option value="neon">Néon</option>
                         <option value="abstract">Abstrait</option>
-                    </select>
-                </div>
-
-                <!-- Music toggle -->
-                <div class="form-group toggle-group">
-                    <label for="setup-music-toggle">Ambiance sonore</label>
-                    <label class="switch">
-                        <input type="checkbox" id="setup-music-toggle" checked>
-                        <span class="slider"></span>
-                    </label>
-                    <span id="music-label">Activée</span>
-                </div>
-
-                <!-- Hidden: music type (only used if toggle is on) -->
-                <div class="form-group" id="music-type-group">
-                    <label for="setup-music-type">Type de musique</label>
-                    <select id="setup-music-type">
-                        <option value="ambient">Ambient</option>
-                        <option value="space">Space</option>
-                        <option value="dark">Dark</option>
                     </select>
                 </div>
 
