@@ -21,7 +21,6 @@ export function getGroq() {
     }
     return groqClient;
 }
-
 export function getGoogleClient() {
     if (!googleClient) {
         googleClient = new OAuth2Client(GOOGLE_CLIENT_ID);
