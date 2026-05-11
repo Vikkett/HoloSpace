@@ -99,3 +99,6 @@ This project is licensed under the MIT License.
 
 ## Contact 
 Email: varennikvika@gmail.com or via [GitHub Issues](https://github.com/Vikkett/HoloSpace/issues).
+
+
+

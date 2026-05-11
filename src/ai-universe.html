@@ -5,45 +5,147 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HoloSpace - AI Universe</title>
     <link rel="stylesheet" href="./css/ai-universe.css">
+    <style>
+        /* ── music controls (injected here to avoid touching ai-universe.css) ── */
+        .music-control {
+            position: fixed;
+            bottom: 24px;
+            left: 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(2, 2, 8, 0.75);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 40px;
+            padding: 8px 16px 8px 10px;
+            backdrop-filter: blur(12px);
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s;
+        }
+        .music-control.visible {
+            opacity: 1;
+            pointer-events: all;
+        }
+        .music-btn {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 18px;
+            cursor: pointer;
+            padding: 0;
+            line-height: 1;
+            transition: transform 0.2s;
+        }
+        .music-btn:hover { transform: scale(1.2); }
+        .music-theme-label {
+            font-size: 11px;
+            letter-spacing: 0.12em;
+            color: rgba(255,255,255,0.5);
+            text-transform: uppercase;
+            user-select: none;
+            min-width: 52px;
+        }
+        .music-visualiser {
+            display: flex;
+            align-items: flex-end;
+            gap: 2px;
+            height: 14px;
+        }
+        .music-visualiser span {
+            display: block;
+            width: 3px;
+            background: rgba(255,255,255,0.4);
+            border-radius: 2px;
+            animation: none;
+        }
+        .music-visualiser.playing span { animation: bar-bounce 0.8s ease-in-out infinite alternate; }
+        .music-visualiser span:nth-child(1) { animation-delay: 0s;    height: 4px; }
+        .music-visualiser span:nth-child(2) { animation-delay: 0.15s; height: 10px; }
+        .music-visualiser span:nth-child(3) { animation-delay: 0.3s;  height: 6px; }
+        .music-visualiser span:nth-child(4) { animation-delay: 0.1s;  height: 12px; }
+        .music-visualiser span:nth-child(5) { animation-delay: 0.25s; height: 5px; }
+        @keyframes bar-bounce {
+            from { transform: scaleY(0.3); opacity: 0.3; }
+            to   { transform: scaleY(1);   opacity: 1;   }
+        }
+
+        /* toggle switch */
+        .toggle-switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+        .toggle-switch input { opacity: 0; width: 0; height: 0; }
+        .toggle-slider {
+            position: absolute; inset: 0;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 24px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .toggle-slider::before {
+            content: '';
+            position: absolute;
+            width: 16px; height: 16px;
+            left: 3px; top: 3px;
+            background: #fff;
+            border-radius: 50%;
+            transition: transform 0.3s;
+        }
+        .toggle-switch input:checked + .toggle-slider { background: rgba(0, 212, 255, 0.4); }
+        .toggle-switch input:checked + .toggle-slider::before { transform: translateX(20px); }
+        .toggle-row { display: flex; align-items: center; gap: 12px; margin-top: 6px; }
+    </style>
 </head>
 <body>
 
-    <!-- Modal overlay -->
+    <!-- ── setup modal ──────────────────────────────────────────────────────── -->
     <div id="setup-modal" class="modal-overlay">
         <div class="modal-content">
             <h2>Configure ton Univers</h2>
-            
             <form id="setup-form" onsubmit="event.preventDefault(); validateAndGo();">
-                
-                <!-- Free text: mood/vibe -->
+
                 <div class="form-group">
                     <label for="setup-vibe">Décris ton mood / vibe</label>
-                    <input 
-                        type="text" 
-                        id="setup-vibe" 
-                        placeholder="ex: sombre cyberpunk, doux et onirique, chaos absolu..." 
-                        required
-                    >
+                    <input type="text" id="setup-vibe"
+                        placeholder="ex: sombre cyberpunk, doux et onirique, chaos absolu..." required>
                     <span id="vibe-error" class="error-msg"></span>
                 </div>
 
-                <!-- Style selector -->
                 <div class="form-group">
                     <label for="setup-style">Style visuel</label>
-                    <select id="setup-style" required>
-                        <option value="" disabled selected>Choisis un style</option>
+                    <select id="setup-style">
+                        <option value="mystique" selected>Mystique</option>
                         <option value="realistic">Réaliste</option>
-                        <option value="low-poly">Low-Poly</option>
                         <option value="neon">Néon</option>
                         <option value="abstract">Abstrait</option>
+                        <option value="low-poly">Low-Poly</option>
                     </select>
                 </div>
 
-                <button type="submit">ENTRER DANS L'UNIVERS</button>
+                <div class="form-group">
+                    <label>Musique de fond</label>
+                    <div class="toggle-row">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="setup-music-toggle">
+                            <span class="toggle-slider"></span>
+                        </label>
+                        <span id="music-label">Désactivée</span>
+                    </div>
+                    <div id="music-type-group" style="display:none; margin-top:8px;">
+                        <select id="setup-music-type">
+                            <option value="ambient">Ambient</option>
+                            <option value="space">Space</option>
+                            <option value="dark">Dark</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button type="submit" id="enter-btn">ENTRER DANS L'UNIVERS</button>
             </form>
         </div>
     </div>
 
+    <!-- ── main interface ───────────────────────────────────────────────────── -->
     <div class="ai-interface">
         <div class="header">
             <div class="status-box">
@@ -54,30 +156,109 @@
         </div>
     </div>
 
-    <div class="chat-trigger" onclick="toggleChat()" style="display:none;">⚡</div>
+    <div class="chat-trigger" id="chat-trigger" onclick="toggleChat()">⚡</div>
 
-    <div class="chat-container" id="chat-window" style="display:none;">
+    <div class="chat-container" id="chat-window">
         <div class="chat-header">
             <span>Matrice de Création</span>
             <span onclick="toggleChat()" style="cursor:pointer;">×</span>
         </div>
-    
         <div id="chat-history">
-            <div class="ai-msg">
-                ✦ Liaison établie. Je suis prêt à traduire votre essence en cosmos.
-            </div>
+            <div class="ai-msg">✦ Liaison établie. Je suis prêt à traduire votre essence en cosmos.</div>
         </div>
-    
         <div class="input-area">
-            <input type="text" id="user-input" placeholder="Décrivez votre vibe..." 
-                   onkeypress="if(event.key==='Enter') handleUserMsg()">
-            <button id="send-btn" onclick="handleUserMsg()">CRÉER</button>
+            <input type="text" id="user-input" placeholder="Décrivez votre vibe...">
+            <button id="send-btn">CRÉER</button>
         </div>
     </div>
-    
+
+    <!-- ── persistent music control (shown after entering the universe) ──────── -->
+    <div class="music-control" id="music-control">
+        <button class="music-btn" id="music-toggle-btn" title="Play / Pause">▶</button>
+        <div class="music-visualiser" id="music-vis">
+            <span></span><span></span><span></span><span></span><span></span>
+        </div>
+        <span class="music-theme-label" id="music-theme-label">—</span>
+    </div>
+
+    <!-- kept for compatibility; not used for playback (Web Audio handles it) -->
+    <audio id="bg-music" loop></audio>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="./js/music.js"></script>
     <script src="./js/ai-universe.js"></script>
-    
-    </body>
+    <script>
+    // ── modal music toggle UX ─────────────────────────────────────────────────
+    const musicToggle    = document.getElementById('setup-music-toggle');
+    const musicLabel     = document.getElementById('music-label');
+    const musicTypeGroup = document.getElementById('music-type-group');
+
+    musicToggle.addEventListener('change', () => {
+        const on = musicToggle.checked;
+        musicLabel.textContent = on ? 'Activée' : 'Désactivée';
+        musicTypeGroup.style.display = on ? 'block' : 'none';
+    });
+
+    // ── floating music control ────────────────────────────────────────────────
+    const musicControl    = document.getElementById('music-control');
+    const musicToggleBtn  = document.getElementById('music-toggle-btn');
+    const musicVis        = document.getElementById('music-vis');
+    const musicThemeLabel = document.getElementById('music-theme-label');
+
+    function updateMusicUI() {
+        const playing = MusicManager.isRunning;
+        musicToggleBtn.textContent = playing ? '⏸' : '▶';
+        musicVis.classList.toggle('playing', playing);
+        musicThemeLabel.textContent = MusicManager.theme
+            ? MusicManager.theme.toUpperCase()
+            : '—';
+    }
+
+    musicToggleBtn.addEventListener('click', () => {
+        if (MusicManager.isRunning) {
+            MusicManager.stop();
+        } else {
+            // re-use whatever theme was chosen at setup
+            const chosenTheme = document.getElementById('setup-music-type').value || 'ambient';
+            MusicManager.start(chosenTheme);
+        }
+        updateMusicUI();
+    });
+
+    // ── hook into validateAndGo to start music on entry ──────────────────────
+    // We wrap the function defined in ai-universe.js so we don't touch that file.
+    const _originalValidateAndGo = window.validateAndGo;
+    window.validateAndGo = function () {
+        _originalValidateAndGo();
+
+        // show the floating control
+        musicControl.classList.add('visible');
+
+        // start music if user opted in
+        if (document.getElementById('setup-music-toggle').checked) {
+            const theme = document.getElementById('setup-music-type').value || 'ambient';
+            MusicManager.start(theme);
+            updateMusicUI();
+        }
+    };
+
+    // ── auto-switch theme when vibe changes (called from ai-universe.js) ──────
+    // updateEnvironment() in ai-universe.js calls this if it exists.
+    window.onVibeChange = function(vibe) {
+        if (!MusicManager.isRunning) return;
+
+        const vibeToTheme = {
+            lonely:    'dark',
+            chaotic:   'dark',
+            mystique:  'space',
+            energetic: 'space',
+            neutral:   'ambient'
+        };
+        const newTheme = vibeToTheme[vibe] || 'ambient';
+        MusicManager.setTheme(newTheme);
+        updateMusicUI();
+    };
+    </script>
+</body>
 </html>
