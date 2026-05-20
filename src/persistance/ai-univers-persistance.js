@@ -9,6 +9,8 @@ let orbits  = [];
 let ambientLight, sunLight;
 let nebulaMesh     = null;
 let isLoading      = false;
+let universeSetup = null;
+let manualSkyOverride = false;
 let sunColorLocked = false;   // mirrored from session, set via setSunColorLocked()
 
 // ── Init ──────────────────────────────────────────────────────

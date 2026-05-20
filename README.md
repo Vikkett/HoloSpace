@@ -1,104 +1,198 @@
 # HoloSpace
 
-## Description
+> Transformez votre essence en galaxie — Transform your emotions into an immersive 3D universe.
 
-HoloSpace is an immersive web application that transforms personal data into an interactive 3D galaxy. The application utilizes AI (Gemini API) to analyze user responses and automatically generate a unique visual universe composed of planets and stars.
+HoloSpace is an interactive web application that transforms emotional states described in natural language into personalized 3D universes generated in real time. Authenticated users describe their mood and visual style, then converse with an AI (Groq) that guides the creation of each planet through a structured dialogue. The scene is rendered entirely in the browser using Three.js with no installation required.
 
-## Getting Started
+A demo mode is available without an account, featuring an animated solar system with all 8 planets.
 
-### Prerequisites
+---
 
-| Dependency | Version | Usage |
-|------------|---------|-------------|
-|[Node.js](https://nodejs.org/en/download)   | v18+    | JavaScript backend runtime |
-|[MySql](https://www.mysql.com/downloads/)      | 8.0+    | User and universe database |
-| npm        | 9+      | Package manager            |
-|[VS Code](https://code.visualstudio.com/download)   | 1.95+| Development IDE            |
-| Browser    | Chrome/Safari | WebGL 2.0 required   |
+## Tech Stack
 
+| Layer | Technology | Version |
+|---|---|---|
+| Frontend runtime | Vite | 7.x |
+| 3D rendering | Three.js | 0.184.0 |
+| CSS processing | PostCSS | 8.5.12 |
+| Backend runtime | Node.js + Express | 24.12.0 |
+| AI engine | Groq SDK (llama-3.3-70b-versatile) | 1.1.2 |
+| Authentication | Google OAuth 2.0 + JWT | — |
+| Package manager | npm | 9+ |
+| Browser | Chrome / Firefox / Safari / Edge (WebGL 2.0) | — |
 
+---
 
-### Configuration
+## Prerequisites
 
-### Deployment
+Before installing, make sure you have:
 
-#### 1. Installation of dependencies
-#### Dev environment
+- [Node.js v18+](https://nodejs.org/en/download) with npm 9+
+- [VS Code 1.95+](https://code.visualstudio.com/download) (recommended)
+- A [Groq account](https://console.groq.com) to generate an API key
+- A [Google Cloud project](https://console.cloud.google.com) with OAuth 2.0 configured
 
-Clone the repository
-[GitHub Vikket](https://github.com/Vikkett/HoloSpace) 
+---
+
+## Installation
+
+### 1. Clone the repository
 
 ```bash
-# Install packages
+git clone https://github.com/Vikkett/HoloSpace.git
+cd HoloSpace
+```
+
+### 2. Install dependencies
+
+```bash
 npm install
+```
 
-# Development Mode (Frontend)
-npm run dev
+### 3. Configure environment variables
 
-# Backend Mode 
+Create a `.env` file inside the `server/` folder:
+
+```
+GROQ_API_KEY=your_groq_key_here
+JWT_SECRET=a_long_random_secret_string
+GOOGLE_CLIENT_ID=your_google_client_id_here
+```
+
+Where to find these values:
+- **GROQ_API_KEY** — [console.groq.com](https://console.groq.com) → API Keys → Create new key
+- **JWT_SECRET** — any long random string (e.g. `holospace_secret_2026_xyz`)
+- **GOOGLE_CLIENT_ID** — Google Cloud Console → APIs & Services → Credentials → OAuth 2.0 Client ID (Web application). Add `http://localhost:5173` as an authorized origin.
+
+### 4. Start the backend
+
+```bash
 cd server
 node server.mjs
-
-# Run Tests
-npm test
+# Server running on http://localhost:3000
 ```
 
-#### 2. Integration environment
+### 5. Start the frontend
+
 ```bash
-# Build for production
-npm run build
+# From the project root
+npm run dev
+# http://localhost:5173
 ```
 
-### Directory Structure 
+---
+
+## Available Scripts
+
+```bash
+npm run dev      # Start Vite dev server (frontend, port 5173)
+npm run build    # Build for production → dist/
+npm test         # Run Jest unit and integration tests
+node server/server.mjs   # Start Express backend (port 3000)
+```
+
+---
+
+## Directory Structure
+
 ```
 holospace/
 ├── .github/
 │   └── workflows/
-│       └── ci.yml                      
-│  
-├── server
-│   └── server.mjs            
-├── src/                               
+│       └── ci.yml
+├── server/
+│   ├── app.mjs                      # Express app, routes, AI logic, session management
+│   └── server.mjs                   # Entry point — starts server on port 3000
+├── src/
 │   ├── css/
-│   │   ├── style.css         
-│   │   └── login.css         
-│   ├── index.html
-│   ├── universe.html
-│   └── ai-universe.html
-│
-├── tests
-│   └── basic.test.js           
+│   │   ├── style.css
+│   │   ├── login.css
+│   │   ├── ai-universe.css
+│   │   └── universe.css
+│   ├── js/
+│   │   ├── ai-universe-domain.js        # Business logic (no DOM, no Three.js)
+│   │   ├── ai-universe-persistance.js   # Three.js scene state
+│   │   ├── ai-universe-presentation.js  # UI interactions and DOM
+│   │   ├── index-domain.js              # Auth logic
+│   │   ├── index-persistance.js         # Local storage layer
+│   │   └── universe.js                  # Solar system demo (Three.js)
+│   ├── index.html                   # Landing page
+│   ├── ai-universe.html             # AI universe creation page
+│   └── universe.html                # Demo mode (no account required)
+├── tests/
+│   ├── basic.test.js
+│   ├── frontend.test.js
+│   ├── ai-universe.test.js
+│   └── server.test.js
 ├── .gitignore
-├── package-lock.json               
-├── package.json             
-├── README.md
-└── vite.config.js                 
+├── babel.config.js
+├── jest.config.js
+├── jest.setup.js
+├── package.json
+├── package-lock.json
+├── vite.config.js
+└── README.md
 ```
-## Collaboration
 
-#### Proposing a new feature
- 
-1. Issue: Open an issue on [GitHub](https://github.com/Vikkett/HoloSpace/issues) describing the feature.
-2. Discussion: Wait for validation or feedback.
-3. Pull Request: Create a branch feature/feature-name and submit.
+---
 
+## Architecture
 
-### Git Workflow
+HoloSpace uses a **three-layer frontend architecture**:
 
-```bash
-# Main Branch
-main        # Stable code, deployable
+- **Domain** (`-domain.js`) — pure business logic, no DOM access
+- **Persistance** (`-persistance.js`) — state and storage management
+- **Presentation** (`-presentation.js`) — UI, DOM interactions, event handlers
 
-# Development Branch
-develop     # Feature integration
+The backend is a single Express server (`app.mjs`) with in-memory session management (`Map`). Each session stores the conversation history, planet answers, environment state, and user preferences. The Groq AI receives the full session state in every system prompt and has access to six tools:
+
+`createPlanet` · `updatePlanetColor` · `changeSky` · `changeSun` · `setVibe` · `completeUniverse`
+
+A **Hard Guard** on the server blocks `createPlanet` calls until exactly 5 answers have been collected for the current planet, regardless of what the AI model decides.
+
+---
+
+## How It Works
+
+1. User logs in via Google OAuth and fills in a **vibe** (free text) and **visual style** (Mystique, Realistic, Neon, Abstract, Low-Poly)
+2. The AI opens a guided conversation and asks **5 questions per planet**: name, color, atmosphere, element, and secret trait
+3. Once 5 answers are collected, the Hard Guard lifts and the server calls `createPlanet`
+4. Three.js instantly renders the planet in the 3D scene with its colors, rings, and orbit
+5. The sky, nebula, and ambient light update automatically to match the overall vibe
+6. The user can add more planets, modify the environment via chat, or re-open the customization form at any time
+
+---
+
+## Known Limitations
+
+- Session data is stored **in memory** (Node.js `Map`) and is lost on server restart — database persistence is not yet implemented
+- After login, authenticated users are not automatically redirected to their universe (modal re-opens instead)
+- Universe preferences are not persisted between visits — the setup form reappears on each reload
+- Audio ambiance toggle is implemented in the UI but non-functional (no audio files included)
+
+---
+
+## Contribution
+
+1. Open an [issue](https://github.com/Vikkett/HoloSpace/issues) describing the bug or feature
+2. Wait for feedback or validation
+3. Create a branch `feature/feature-name` and submit a Pull Request against `develop`
 
 ```
+main       # Stable, deployable code
+develop    # Feature integration branch
+```
+
+---
 
 ## License
-This project is licensed under the MIT License.
 
-## Contact 
-Email: varennikvika@gmail.com or via [GitHub Issues](https://github.com/Vikkett/HoloSpace/issues).
+This project is licensed under the [MIT License](LICENSE).
 
+---
 
+## Contact
 
+Viktoriia Varennyk — varennikvika@gmail.com  
+Supervisor: Nicolas Glassey — EPCL Sainte-Croix, 2026  
+Issues: [github.com/Vikkett/HoloSpace/issues](https://github.com/Vikkett/HoloSpace/issues)

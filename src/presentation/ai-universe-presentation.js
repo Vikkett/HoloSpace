@@ -6,7 +6,7 @@
 // ── App state ─────────────────────────────────────────────────
 
 const session = createSession();   // domain
-let manualSkyOverride = false;
+
 
 // ── Chat UI ───────────────────────────────────────────────────
 
