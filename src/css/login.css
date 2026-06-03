@@ -1,6 +1,4 @@
-/* ==========================================
-   MODAL OVERLAY (Background)
-   ========================================== */
+
    .modal-overlay {
     display: none; 
     position: fixed;
@@ -20,13 +18,10 @@
     display: flex;
 }
 
-/* ==========================================
-   AUTH & LOGOUT BOXES (The Windows)
-   ========================================== */
 .auth-box {
     background: rgba(10, 10, 18, 0.9);
     padding: 50px 40px;
-    border-radius: 30px; /* Softer, stylish corners */
+    border-radius: 30px; 
     border: 1px solid rgba(0, 212, 255, 0.3);
     width: 90%;
     max-width: 400px;
@@ -60,9 +55,6 @@
     font-size: 0.9rem;
 }
 
-/* ==========================================
-   BUTTONS (Stadium Form)
-   ========================================== */
 .logout-actions {
     display: flex;
     gap: 15px;
@@ -75,7 +67,7 @@
     color: white;
     border: none;
     padding: 12px 30px;
-    border-radius: 50px; /* Stadium form */
+    border-radius: 50px; 
     cursor: pointer;
     font-weight: 500;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -93,7 +85,7 @@
     color: white;
     border: 1px solid rgba(255, 255, 255, 0.2);
     padding: 12px 30px;
-    border-radius: 50px; /* Stadium form */
+    border-radius: 50px; 
     cursor: pointer;
     transition: all 0.3s ease;
 }
@@ -121,9 +113,6 @@
     opacity: 1;
 }
 
-/* ==========================================
-   NAVBAR & PROFILE IMAGE FIX
-   ========================================== */
 .links {
     position: relative;
     display: flex;
@@ -134,7 +123,7 @@
 #user-photo {
     width: 40px !important;
     height: 40px !important;
-    border-radius: 50% !important; /* Perfect Circle */
+    border-radius: 50% !important; 
     object-fit: cover !important;
     border: 2px solid #00d4ff;
     box-shadow: 0 0 15px rgba(0, 212, 255, 0.3);
@@ -147,12 +136,9 @@
     box-shadow: 0 0 20px rgba(0, 212, 255, 0.6);
 }
 
-/* ==========================================
-   USER MENU DROPDOWN
-   ========================================== */
 .dropdown-menu {
     position: absolute;
-    top: 110%; /* Under nav */
+    top: 110%;
     right: 0;
     background: rgba(10, 10, 20, 0.95);
     border: 1px solid rgba(0, 212, 255, 0.3);
@@ -198,9 +184,6 @@
     color: #ff3264 !important;
 }
 
-/* ==========================================
-   NOTIFICATIONS
-   ========================================== */
 .notification-container {
     position: fixed;
     top: 20px;
